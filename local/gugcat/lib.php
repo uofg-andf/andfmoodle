@@ -26,8 +26,8 @@
 function local_gugcat_extend_navigation_course($parentnode, $course, $context) {
     $url = new moodle_url('/local/gugcat/index.php', array('id' => $course->id));
     $gugcat = get_string('navname', 'local_gugcat');
-    $icon = new pix_icon('my-media', '', 'local_mymedia');
-    $main_node = $parentnode->add($gugcat, $url, navigation_node::TYPE_CONTAINER, $gugcat, 'gugcat', $icon);
+    $icon = new pix_icon('t/grades', '');
+    $currentCourseNode = $parentnode->add($gugcat, $url, navigation_node::NODETYPE_LEAF, $gugcat, 'gugcat', $icon);
 }
 
 function local_gugcat_extend_navigation($navigation){
