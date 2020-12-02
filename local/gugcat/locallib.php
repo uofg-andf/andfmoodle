@@ -131,7 +131,7 @@ class local_gugcat {
         $i = 1;
         foreach ($students as $student) {
             $gbgrade = $grading_info->items[0]->grades[$student->id]->grade;
-            $firstgrade = is_null($gbgrade) ? get_string('nograde', 'local_gugcat') : self::convert_grade($gbgrade-1);
+            $firstgrade = is_null($gbgrade) ? get_string('nograde', 'local_gugcat') : self::convert_grade($gbgrade);
             $gradecaptureitem = new grade_capture_item();
             $gradecaptureitem->cnum = $i;
             $gradecaptureitem->studentno = $student->id;
@@ -140,13 +140,15 @@ class local_gugcat {
             $gradecaptureitem->firstgrade = $firstgrade;
             $gradecaptureitem->grades = array();
             foreach ($gradeitems as $item) {
-                $rawgrade = $item->grades[$student->id]->finalgrade;
-                if($item->id === $prvgradeid){
-                    $grade = is_null($rawgrade) ? $firstgrade : self::convert_grade($rawgrade);
-                    $gradecaptureitem->provisionalgrade = $grade;
-                }else{
-                    $grade = is_null($rawgrade) ? 'N/A' : self::convert_grade($rawgrade);
-                    array_push($gradecaptureitem->grades, $grade);
+                if(isset($item->grades[$student->id])){
+                    $rawgrade = $item->grades[$student->id]->finalgrade;
+                    if($item->id === $prvgradeid){
+                        $grade = is_null($rawgrade) ? $firstgrade : self::convert_grade($rawgrade);
+                        $gradecaptureitem->provisionalgrade = $grade;
+                    }else{
+                        $grade = is_null($rawgrade) ? 'N/A' : self::convert_grade($rawgrade);
+                        array_push($gradecaptureitem->grades, $grade);
+                    }
                 }
             }
     
@@ -299,7 +301,7 @@ class local_gugcat {
 
     public static function convert_grade($grade){
         $final_grade = intval($grade);
-        if (!($final_grade > 22 || $final_grade <= 0)){
+        if (!($final_grade >= 22 || $final_grade < 0)){
             return self::$GRADES[$final_grade];
         }
         else {
