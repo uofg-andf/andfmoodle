@@ -52,7 +52,7 @@ class grade_aggregation{
             $grades = new stdClass();
 
             //get provisional grades
-            $prvgrdid = local_gugcat::set_prv_grade_id($course->id, $mod->id, $scaleid);
+            $prvgrdid = local_gugcat::set_prv_grade_id($course->id, $mod, $scaleid);
             $sort = 'id';
             $fields = 'userid, itemid, id, finalgrade, timemodified';
             $grades->provisional = $DB->get_records('grade_grades', array('itemid' => $prvgrdid), $sort, $fields);
