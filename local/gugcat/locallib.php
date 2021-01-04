@@ -274,7 +274,6 @@ class local_gugcat {
         if($scale = $DB->get_record('scale', array('id'=>$scaleid), '*')){
         $scalegrades = make_menu_from_list($scale->scale); 
         }
-        // $scalegrades[0] = null;
         $scalegrades[NON_SUBMISSION] = NON_SUBMISSION_AC;
         $scalegrades[MEDICAL_EXEMPTION] = MEDICAL_EXEMPTION_AC;
         self::$GRADES = $scalegrades;
