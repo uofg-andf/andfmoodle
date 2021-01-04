@@ -239,6 +239,7 @@ class local_gugcat {
         $grade_->finalgrade = self::is_admin_grade($grade) ? null : $grade;
         $grade_->itemid = $itemid;
         $grade_->userid = $userid;
+        $grade_->excluded = 1;
         $grade_->timemodified = time();
         //update existing grade
         return $grade_->update();
