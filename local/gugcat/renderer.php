@@ -26,8 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 class local_gugcat_renderer extends plugin_renderer_base {
-
     public function display_grade_capture($activities_, $rows, $columns) {
+        $contextaction = null;
         $courseid = $this->page->course->id;
         $modid = (($this->page->cm) ? $this->page->cm->id : null);
         $categoryid = optional_param('categoryid', null, PARAM_INT);
@@ -57,6 +57,10 @@ class local_gugcat_renderer extends plugin_renderer_base {
         //grade capture rows
         foreach ($rows as $row) {
             //url to add grade form page
+            // foreach ($activities as $act) {
+                $contextaction = $this->context_actions($row->studentno, $modid, $courseid, $isgradehidden);
+            // }
+
             $addformurl->param('studentid', $row->studentno);
             $htmlrows .= html_writer::start_tag('tr');
             //hidden inputs for id and provisional grades
@@ -90,12 +94,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
                             <input name="reason" value="" class="input-reason" id="input-reason" type="text"/>
                     </td>';
             $isgradehidden = (!isset($row->hidden)) ? null: (($row->hidden) ? '<br/>('.get_string('hiddengrade', 'local_gugcat').')' : '');
-            if(is_null($row->provisionalgrade) || $row->provisionalgrade == '' || 
-                $row->provisionalgrade == get_string('nograde', 'local_gugcat') || 
-                $row->provisionalgrade == get_string('missinggrade', 'local_gugcat'))
-                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'. $isgradehidden.'</td>';
-            else
-                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, $isgradehidden).  $isgradehidden.'</td>';
+            $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'. $contextaction . $isgradehidden.'</td>';
             $htmlrows .= '<td>
                             <button type="button" class="btn btn-default addnewgrade" onclick="location.href=\''.$addformurl.'\'">
                                 '.get_string('addnewgrade', 'local_gugcat').'
@@ -139,21 +138,41 @@ class local_gugcat_renderer extends plugin_renderer_base {
         foreach($gradeversions as $gradeversion){
             $html .= html_writer::start_tag('div', array('class'=>'form-group row'));
             $html .= html_writer::start_tag('div', array('class'=> 'col-md-3'));
-            if ($gradeversion->itemname == get_string('moodlegrade', 'local_gugcat'))
-                $html .= html_writer::tag('label', $gradeversion->itemname. date(" [j/n/Y]", strtotime(userdate($gradeversion->timemodified))));
-            else 
-                $html .= html_writer::tag('label', $gradeversion->itemname);
+            $html .= html_writer::tag('label', $gradeversion->itemname);
             $html .= html_writer::end_tag('div');
-            $html .= html_writer::div(local_gugcat::convert_grade($gradeversion->grades[$student->id]->grade), 'col-md-9 form-inline felement');
+            $html .= html_writer::div(local_gugcat::convert_grade($gradeversion->grades[$student->id]->finalgrade), 'col-md-9 form-inline felement');
+            $html .= html_writer::end_tag('div');
+        }
+        $html .= html_writer::end_tag('div');
+        return $html;
+    }
+    
+    public function display_edit_grade_form($course, $student, $gradeversions) {
+        $modname = (($this->page->cm) ? $this->page->cm->name : null);
+        $html = $this->header();
+        $html .= $this->render_from_template('local_gugcat/gcat_edit_form', (object)[
+            'addnewgrade' =>get_string('editgrade', 'local_gugcat'),
+            'course' => $course,
+            'section' => $modname,
+            'student' => $student
+        ]);
+        $html .= html_writer::start_tag('div', array('class'=>'mform-container'));
+        foreach($gradeversions as $gradeversion){
+            $html .= html_writer::start_tag('div', array('class'=>'form-group row'));
+            $html .= html_writer::start_tag('div', array('class'=> 'col-md-3'));
+            $html .= html_writer::tag('label', $gradeversion->itemname);
+            $html .= html_writer::end_tag('div');
+            $html .= html_writer::div(local_gugcat::convert_grade($gradeversion->grades[$student->id]->finalgrade), 'col-md-9 form-inline felement');
             $html .= html_writer::end_tag('div');
         }
         $html .= html_writer::end_tag('div');
         return $html;
     }
 
-    public function display_aggregation_tool($rows, $activities) {
+    public function display_aggregation_tool($rows, $activities, $courseid) {
         $htmlcolumns = null;
         $htmlrows = null;
+        $contextaction = null;
         foreach ($activities as $act) {
             $htmlcolumns .= html_writer::tag('th', $act->name);
         }
@@ -167,12 +186,16 @@ class local_gugcat_renderer extends plugin_renderer_base {
             $htmlrows .= html_writer::tag('td', $row->studentno);
             $htmlrows .= html_writer::tag('td', $row->surname);
             $htmlrows .= html_writer::tag('td', $row->forename);
+
             foreach((array) $row->grades as $grade) {
-                $htmlrows .= '<td>'.$grade.((strpos($grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno)).'</td>';
+                foreach ($activities as $act) {
+                    $contextaction = $this->context_actions($row->studentno, $act->id, $courseid);
+                }
+                $htmlrows .= '<td>'.$grade.((strpos($grade, 'No grade') !== false) ? null : $contextaction).'</td>';
             }
             $htmlrows .= '<td><i class="fa fa-times-circle"></i></td>';
             $htmlrows .= html_writer::tag('td', $row->completed);
-            $htmlrows .= html_writer::tag('td', $row->aggregatedgrade);
+            $htmlrows .= html_writer::empty_tag('td');
             $htmlrows .= html_writer::end_tag('tr');
         }
         $html = $this->header();
@@ -216,10 +239,13 @@ class local_gugcat_renderer extends plugin_renderer_base {
         return $html;
     }
 
-    private function context_actions($studentno, $ishidden=null) {
+    private function context_actions($studentno, $activityid, $courseid=null, $ishidden=null) {
+        $url = '/andfmoodle/local/gugcat/edit/index.php?id='. $courseid .'&activityid='. $activityid .'&studentid='. $studentno;
         $html = html_writer::tag('i', null, array('class' => 'fa fa-ellipsis-h', 'data-toggle' => 'dropdown'));
         $html .= html_writer::start_tag('ul', array('class' => 'dropdown-menu'));
+        $html .= html_writer::start_tag('a', array('href' =>  $url));
         $html .= html_writer::tag('li', get_string('amendgrades', 'local_gugcat'), array('class' => 'dropdown-item'));
+        $html .= html_writer::end_tag('a');
         $html .= html_writer::tag('li', get_string('historicalamendments', 'local_gugcat'), array('class' => 'dropdown-item'));
         $html .= html_writer::tag('li', !empty($ishidden) ? get_string('showgrade', 'local_gugcat') : get_string('hidefromstudent', 'local_gugcat'), array('class' => 'dropdown-item hide-show-grade',
             'onclick'=>
