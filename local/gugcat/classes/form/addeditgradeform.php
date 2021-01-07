@@ -24,7 +24,7 @@
  */
 require_once("$CFG->libdir/formslib.php");
 require_once($CFG->dirroot . '/local/gugcat/locallib.php');
-class editgradeform extends moodleform {
+class addeditgradeform extends moodleform {
     //Add elements to form
     public function definition() {
         global $CFG;
@@ -39,7 +39,6 @@ class editgradeform extends moodleform {
         $mform->addElement('text', 'otherreason', get_string('reasonother', 'local_gugcat'), ['class' => 'mform-custom']); 
         $mform->setType('otherreason', PARAM_NOTAGS); 
         $mform->hideIf('otherreason', 'reasons', 'neq', 8); 
-        $mform->setDefault('otherreason', "Please Specify");
 
         $mform->addElement('select', 'grade', get_string('grade', 'local_gugcat'), local_gugcat::$GRADES, ['class' => 'mform-custom']); 
         $mform->setType('grade', PARAM_NOTAGS); 
