@@ -96,7 +96,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
                 $row->provisionalgrade == get_string('missinggrade', 'local_gugcat'))
                 $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'. $isgradehidden.'</td>';
             else
-                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, $isgradehidden).  $isgradehidden.'</td>';
+                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, null, null, $isgradehidden).  $isgradehidden.'</td>';
             $htmlrows .= '<td>
                             <button type="button" class="btn btn-default addnewgrade" onclick="location.href=\''.$addformurl.'\'">
                                 '.get_string('addnewgrade', 'local_gugcat').'
@@ -189,7 +189,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
             $htmlrows .= '<td><i class="fa fa-times-circle"></i></td>';
             $htmlrows .= html_writer::tag('td', $row->completed);
             $htmlrows .= ($row->aggregatedgrade != get_string('missinggrade', 'local_gugcat')) 
-            ? html_writer::start_tag('td').$row->aggregatedgrade.$this->context_actions($row->studentno, null, true, $gradeformurl).html_writer::end_tag('td')
+            ? html_writer::start_tag('td').$row->aggregatedgrade.$this->context_actions($row->studentno, null, null, null, true, $gradeformurl).html_writer::end_tag('td')
             : html_writer::tag('td', $row->aggregatedgrade);
             $htmlrows .= html_writer::end_tag('tr');
         }
@@ -234,9 +234,11 @@ class local_gugcat_renderer extends plugin_renderer_base {
         return $html;
     }
 
-    private function context_actions($studentno, $ishidden=null, $is_aggregrade = false, $link = null) {
+    private function context_actions($studentno, $activityid=null, $courseid=null, $ishidden=null, $is_aggregrade = false, $link = null) {
+        $url = '/andfmoodle/local/gugcat/edit/index.php?id='. $courseid .'&activityid='. $activityid .'&studentid='. $studentno;
         $html = html_writer::tag('i', null, array('class' => 'fa fa-ellipsis-h', 'data-toggle' => 'dropdown'));
         $html .= html_writer::start_tag('ul', array('class' => 'dropdown-menu'));
+        $html .= html_writer::start_tag('a', array('href' =>  $url));
         if($is_aggregrade){
             $adjustlink = $link . '&setting=' . ADJUST_WEIGHT_FORM;
             $overridelink = $link . '&setting=' . OVERRIDE_GRADE_FORM;
