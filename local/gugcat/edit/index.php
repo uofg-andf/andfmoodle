@@ -26,7 +26,7 @@
 
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot . '/local/gugcat/locallib.php');
-require_once($CFG->dirroot.'/local/gugcat/classes/form/editgradeform.php');
+require_once($CFG->dirroot.'/local/gugcat/classes/form/addeditgradeform.php');
 require_once($CFG->libdir.'/filelib.php');
 
 $courseid = required_param('id', PARAM_INT);
@@ -61,7 +61,7 @@ $grading_info = grade_get_grades($courseid, 'mod', $module->modname, $module->in
 $gradeitems = local_gugcat::get_grade_grade_items($course, $module);
 $gradeversions = local_gugcat::filter_grade_version($gradeitems, $studentid);
 
-$mform = new editgradeform(null, array('id'=>$courseid, 'categoryid'=>$categoryid, 'activityid'=>$activityid, 'studentid'=>$studentid));
+$mform = new addeditgradeform(null, array('id'=>$courseid, 'categoryid'=>$categoryid, 'activityid'=>$activityid, 'studentid'=>$studentid));
 if ($fromform = $mform->get_data()) {
 
     if($fromform->reasons == 8) {
@@ -75,7 +75,8 @@ if ($fromform = $mform->get_data()) {
                             $fromform->userfile, array('subdirs' => 0));
     }
     $gradeitemid = local_gugcat::get_grade_item_id($courseid, $module->id, $gradereason);
-    $grades = local_gugcat::update_grade($studentid, $gradeitemid, $fromform->grade);
+    $grades = local_gugcat::update_grade($studentid, $gradeitemid, $fromform->grade, $fromform->notes, $fromform->userfile);
+    local_gugcat::update_grade($studentid, local_gugcat::$PRVGRADEID, $fromform->grade);
     $url = '/local/gugcat/index.php?id='.$courseid.'&activityid='.$activityid;
     $url .= (($categoryid !== 0) ? '&categoryid='.$categoryid : null);
     header("Location:" .$CFG->wwwroot . $url);
@@ -84,7 +85,7 @@ if ($fromform = $mform->get_data()) {
 
 echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('local_gugcat');
-echo $renderer->display_edit_grade_form($course, $student, $gradeversions);
+echo $renderer->display_add_edit_grade_form($course, $student, $gradeversions, false);
 $mform->display();
 echo $OUTPUT->footer();
 
