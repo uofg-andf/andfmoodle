@@ -131,7 +131,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $modname = (($this->page->cm) ? $this->page->cm->name : null);
         $html = $this->header();
         $html .= $this->render_from_template('local_gugcat/gcat_add_form', (object)[
-            'addnewgradeoredit' => $isaddform == true ? get_string('addnewgrade', 'local_gugcat') : get_string('editgrade', 'local_gugcat'),
+            'addeditgrade' => $isaddform == true ? get_string('addnewgrade', 'local_gugcat') : get_string('editgrade', 'local_gugcat'),
             'course' => $course,
             'section' => $modname,
             'student' => $student
