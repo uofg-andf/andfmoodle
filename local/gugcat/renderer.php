@@ -235,17 +235,16 @@ class local_gugcat_renderer extends plugin_renderer_base {
     }
 
     private function context_actions($studentno, $activityid=null, $courseid=null, $ishidden=null, $is_aggregrade = false, $link = null) {
-        $url = '/andfmoodle/local/gugcat/edit/index.php?id='. $courseid .'&activityid='. $activityid .'&studentid='. $studentno;
         $html = html_writer::tag('i', null, array('class' => 'fa fa-ellipsis-h', 'data-toggle' => 'dropdown'));
         $html .= html_writer::start_tag('ul', array('class' => 'dropdown-menu'));
-        $html .= html_writer::start_tag('a', array('href' =>  $url));
         if($is_aggregrade){
             $adjustlink = $link . '&setting=' . ADJUST_WEIGHT_FORM;
             $overridelink = $link . '&setting=' . OVERRIDE_GRADE_FORM;
+            $editlink = '/andfmoodle/local/gugcat/edit/index.php?id='. $courseid .'&activityid='. $activityid .'&studentid='. $studentno;
             $html .= html_writer::tag('li', get_string('adjustcourseweight', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$adjustlink.'\''));
             $html .= html_writer::tag('li', get_string('overrideggregrade', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$overridelink.'\''));
         }else{
-            $html .= html_writer::tag('li', get_string('amendgrades', 'local_gugcat'), array('class' => 'dropdown-item'));
+            $html .= html_writer::tag('li', get_string('amendgrades', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$editlink.'\''));
             $html .= html_writer::tag('li', get_string('historicalamendments', 'local_gugcat'), array('class' => 'dropdown-item'));
             $html .= html_writer::tag('li', !empty($ishidden) ? get_string('showgrade', 'local_gugcat') : get_string('hidefromstudent', 'local_gugcat'), array('class' => 'dropdown-item hide-show-grade',
                 'onclick'=>
