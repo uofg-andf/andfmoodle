@@ -269,7 +269,6 @@ class local_gugcat {
         $grade_->information = $gradedocs;
         $grade_->itemid = $itemid;
         $grade_->userid = $userid;
-        $grade_->excluded = 1;
         $grade_->timemodified = time();
         //update existing grade
         return $grade_->update();
@@ -279,7 +278,7 @@ class local_gugcat {
         $scale = self::$GRADES;
         $final_grade = intval($grade);
         if ($final_grade >= key(array_slice($scale, -1, 1, true)) && $final_grade <= key($scale)){
-            return $scale[$final_grade];
+            return ($final_grade != 0) ? $scale[$final_grade] : $final_grade;
         }
         else {
             return $grade; 
