@@ -170,9 +170,9 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $htmlcolumns .= html_writer::tag('th', get_string('requiresresit', 'local_gugcat'));
         $htmlcolumns .= html_writer::tag('th', get_string('percentcomplete', 'local_gugcat'));
         $htmlcolumns .= html_writer::tag('th', get_string('aggregatedgrade', 'local_gugcat').'<i class="fa fa-cog"></i></th>');
+        $gradeformurl .= '&cnum=_cnum'; //add cnum in the url
         //grade capture rows
         foreach ($rows as $row) {
-            $gradeformurl .= '&studentid=' . $row->studentno; //add student id in the url
             $htmlrows .= html_writer::start_tag('tr');
             $htmlrows .= html_writer::tag('td', $row->cnum);
             $htmlrows .= html_writer::tag('td', $row->studentno);
@@ -180,13 +180,15 @@ class local_gugcat_renderer extends plugin_renderer_base {
             $htmlrows .= html_writer::tag('td', $row->forename);
 
             foreach((array) $row->grades as $grade) {
-                $htmlrows .= '<td>'.$grade.((strpos($grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, true, false, $gradeformurl)).'</td>';
+                echo $grade;
+                die;
+                // $htmlrows .= '<td>'.$grade.((strpos($grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, true, false, $gradeformurl)).'</td>';
             }
             $htmlrows .= '<td><i class="fa fa-times-circle"></i></td>';
             $htmlrows .= html_writer::tag('td', $row->completed);
-            $htmlrows .= ($row->aggregatedgrade != get_string('missinggrade', 'local_gugcat'))
-            ? html_writer::start_tag('td').$row->aggregatedgrade.$this->context_actions($row->studentno, null, true, $gradeformurl).html_writer::end_tag('td')
-            : html_writer::tag('td', $row->aggregatedgrade);
+            $htmlrows .= ($row->aggregatedgrade->display != get_string('missinggrade', 'local_gugcat')) 
+            ? html_writer::start_tag('td').$row->aggregatedgrade->display.$this->context_actions($row->studentno, null, true, false, str_replace('_cnum', $row->cnum, $gradeformurl)).html_writer::end_tag('td')
+            : html_writer::tag('td', $row->aggregatedgrade->display);
             $htmlrows .= html_writer::end_tag('tr');
         }
         $html = $this->header();
@@ -214,7 +216,6 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $html = $this->header();
         $html .= $this->render_from_template('local_gugcat/gcat_adjustoverride_form', (object)[
             'title' =>get_string(($setting != 0 ? 'overridestudgrade' : 'adjustcourseweight'), 'local_gugcat'),
-            'candidate' => '1',
             'student' => $student
         ]);
         return $html;
@@ -245,6 +246,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $html = html_writer::tag('i', null, array('class' => 'fa fa-ellipsis-h', 'data-toggle' => 'dropdown'));
         $html .= html_writer::start_tag('ul', array('class' => 'dropdown-menu'));
         if($is_aggregrade){
+            $link .= '&studentid='.$studentno;
             $adjustlink = $link . '&setting=' . ADJUST_WEIGHT_FORM;
             $overridelink = $link . '&setting=' . OVERRIDE_GRADE_FORM;
             $html .= html_writer::tag('li', get_string('adjustcourseweight', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$adjustlink.'\''));

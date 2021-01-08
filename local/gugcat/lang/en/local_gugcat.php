@@ -68,6 +68,7 @@ $string['reasonother'] = 'Other';
 $string['releaseprvgrades'] = 'Release provisional grades';
 $string['requiresresit'] = 'Requires Resit';
 $string['saveallnewgrade'] = 'Save multiple grades';
+$string['savechanges'] = 'Save changes';
 $string['selectreason'] = 'Select reason';
 $string['showgrade'] = 'Show from student';
 $string['showgrademsg'] = 'The grade is now visible to the student';
