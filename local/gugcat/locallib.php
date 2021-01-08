@@ -282,7 +282,8 @@ class local_gugcat {
         $grade_->finalgrade = self::is_admin_grade($grade) ? null : $grade;
         if(is_null($notes))
             $grade_->feedback = $notes;
-        $grade_->information = $gradedocs;
+        if(is_null($gradedocs))
+            $grade_->information = $gradedocs;
         $grade_->itemid = $itemid;
         $grade_->userid = $userid;
         $grade_->overridden = $overridden;
