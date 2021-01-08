@@ -32,7 +32,6 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $categoryid = optional_param('categoryid', null, PARAM_INT);
         //url to add form
         $addformurl = new moodle_url('/local/gugcat/add/index.php', array('id' => $courseid, 'activityid' => $modid));
-        $editformurl = new moodle_url('/local/gugcat/edit/index.php', array('id' => $courseid, 'activityid' => $modid));
         //url action form
         $actionurl = 'index.php?id=' . $courseid . '&activityid=' . $modid;
         //add category id in the url if not null
@@ -58,7 +57,6 @@ class local_gugcat_renderer extends plugin_renderer_base {
         //grade capture rows
         foreach ($rows as $row) {
             $addformurl->param('studentid', $row->studentno);
-            $editformurl->param('studentid', $row->studentno);
             $htmlrows .= html_writer::start_tag('tr');
             //hidden inputs for id and provisional grades
             $htmlrows .= html_writer::empty_tag('input', array('name' => 'grades['.$row->studentno.'][id]', 'type' => 'hidden', 'value' => $row->studentno));
@@ -96,7 +94,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
                 $row->provisionalgrade == get_string('missinggrade', 'local_gugcat'))
                 $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'. $isgradehidden.'</td>';
             else
-                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, null, false, true, htmlspecialchars_decode($editformurl)).  $isgradehidden.'</td>';
+                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, null, false, true, htmlspecialchars_decode($addformurl)).  $isgradehidden.'</td>';
             $htmlrows .= '<td>
                             <button type="button" class="btn btn-default addnewgrade" onclick="location.href=\''.$addformurl.'\'">
                                 '.get_string('addnewgrade', 'local_gugcat').'
@@ -172,6 +170,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $htmlcolumns .= html_writer::tag('th', get_string('aggregatedgrade', 'local_gugcat').'<i class="fa fa-cog"></i></th>');
         $gradeformurl .= '&cnum=_cnum'; //add cnum in the url
         //grade capture rows
+      
         foreach ($rows as $row) {
             $htmlrows .= html_writer::start_tag('tr');
             $htmlrows .= html_writer::tag('td', $row->cnum);
@@ -180,9 +179,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
             $htmlrows .= html_writer::tag('td', $row->forename);
 
             foreach((array) $row->grades as $grade) {
-                echo $grade;
-                die;
-                // $htmlrows .= '<td>'.$grade.((strpos($grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, true, false, $gradeformurl)).'</td>';
+                $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, true, false, $gradeformurl)).'</td>';
             }
             $htmlrows .= '<td><i class="fa fa-times-circle"></i></td>';
             $htmlrows .= html_writer::tag('td', $row->completed);
