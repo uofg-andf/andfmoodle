@@ -280,9 +280,9 @@ class local_gugcat {
         $grade_->rawgrade = $grade;
         $grade_->usermodified = $USER->id;
         $grade_->finalgrade = self::is_admin_grade($grade) ? null : $grade;
-        if(is_null($notes))
+        if(!is_null($notes))
             $grade_->feedback = $notes;
-        if(is_null($gradedocs))
+        if(!is_null($gradedocs))
             $grade_->information = $gradedocs;
         $grade_->itemid = $itemid;
         $grade_->userid = $userid;
