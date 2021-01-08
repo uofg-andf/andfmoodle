@@ -32,6 +32,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $categoryid = optional_param('categoryid', null, PARAM_INT);
         //url to add form
         $addformurl = new moodle_url('/local/gugcat/add/index.php', array('id' => $courseid, 'activityid' => $modid));
+        $editformurl = new moodle_url('/local/gugcat/edit/index.php', array('id' => $courseid, 'activityid' => $modid));
         //url action form
         $actionurl = 'index.php?id=' . $courseid . '&activityid=' . $modid;
         //add category id in the url if not null
@@ -57,6 +58,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         //grade capture rows
         foreach ($rows as $row) {
             $addformurl->param('studentid', $row->studentno);
+            $editformurl->param('studentid', $row->studentno);
             $htmlrows .= html_writer::start_tag('tr');
             //hidden inputs for id and provisional grades
             $htmlrows .= html_writer::empty_tag('input', array('name' => 'grades['.$row->studentno.'][id]', 'type' => 'hidden', 'value' => $row->studentno));
@@ -94,7 +96,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
                 $row->provisionalgrade == get_string('missinggrade', 'local_gugcat'))
                 $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'. $isgradehidden.'</td>';
             else
-                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, null, false, htmlspecialchars_decode($addformurl)).  $isgradehidden.'</td>';
+                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, $isgradehidden, false, htmlspecialchars_decode($editformurl)).  $isgradehidden.'</td>';
             $htmlrows .= '<td>
                             <button type="button" class="btn btn-default addnewgrade" onclick="location.href=\''.$addformurl.'\'">
                                 '.get_string('addnewgrade', 'local_gugcat').'
@@ -155,11 +157,15 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $categoryid = optional_param('categoryid', null, PARAM_INT);
     
         //url to add form
-        $addformurl = new moodle_url('/local/gugcat/add/index.php', array('id' => $courseid));
+        $editformurl = new moodle_url('/local/gugcat/edit/index.php', array('id' => $courseid));
 
         //url to grade form
         $gradeformurl = new moodle_url('/local/gugcat/overview/gradeform/index.php', array('id' => $courseid));
-        
+        //add category id in the url if not null
+        if(!is_null($categoryid)){
+            $gradeformurl .= '&categoryid=' . $categoryid;
+        }
+
         $htmlcolumns = null;
         $htmlrows = null;
         foreach ($activities as $act) {
@@ -172,7 +178,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         //grade capture rows
       
         foreach ($rows as $row) {
-            $addformurl->param('studentid', $row->studentno);
+            $editformurl->param('studentid', $row->studentno);
             $htmlrows .= html_writer::start_tag('tr');
             $htmlrows .= html_writer::tag('td', $row->cnum);
             $htmlrows .= html_writer::tag('td', $row->studentno);
@@ -180,8 +186,8 @@ class local_gugcat_renderer extends plugin_renderer_base {
             $htmlrows .= html_writer::tag('td', $row->forename);
             
             foreach((array) $row->grades as $grade) {
-                $addformurl->param('activityid', $grade->activityid);
-                $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, htmlspecialchars_decode($addformurl))).'</td>';
+                $editformurl->param('activityid', $grade->activityid);
+                $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, htmlspecialchars_decode($editformurl))).'</td>';
             }
 
             $htmlrows .= '<td><i class="fa fa-times-circle"></i></td>';
