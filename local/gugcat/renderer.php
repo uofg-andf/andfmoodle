@@ -143,7 +143,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
             else 
                 $html .= html_writer::tag('label', $gradeversion->itemname);
             $html .= html_writer::end_tag('div');
-            $html .= html_writer::div(local_gugcat::convert_grade($gradeversion->grades[$student->id]->finalgrade), 'col-md-9 form-inline felement');
+            $html .= html_writer::div(local_gugcat::convert_grade($gradeversion->grades[$student->id]->grade), 'col-md-9 form-inline felement');
             $html .= html_writer::end_tag('div');
         }
         $html .= html_writer::end_tag('div');
