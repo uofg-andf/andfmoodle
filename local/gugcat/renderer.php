@@ -153,12 +153,12 @@ class local_gugcat_renderer extends plugin_renderer_base {
     public function display_aggregation_tool($rows, $activities) {
         $courseid = $this->page->course->id;
         $categoryid = optional_param('categoryid', null, PARAM_INT);
+    
+        //url to add form
+        $addformurl = new moodle_url('/local/gugcat/add/index.php', array('id' => $courseid));
+
         //url to grade form
         $gradeformurl = new moodle_url('/local/gugcat/overview/gradeform/index.php', array('id' => $courseid));
-        //add category id in the url if not null
-        if(!is_null($categoryid)){
-            $gradeformurl .= '&categoryid=' . $categoryid;
-        }
         
         $htmlcolumns = null;
         $htmlrows = null;
@@ -172,15 +172,18 @@ class local_gugcat_renderer extends plugin_renderer_base {
         //grade capture rows
       
         foreach ($rows as $row) {
+            $addformurl->param('studentid', $row->studentno);
             $htmlrows .= html_writer::start_tag('tr');
             $htmlrows .= html_writer::tag('td', $row->cnum);
             $htmlrows .= html_writer::tag('td', $row->studentno);
             $htmlrows .= html_writer::tag('td', $row->surname);
             $htmlrows .= html_writer::tag('td', $row->forename);
-
+            
             foreach((array) $row->grades as $grade) {
-                $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, $gradeformurl)).'</td>';
+                $addformurl->param('activityid', $grade->activityid);
+                $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, htmlspecialchars_decode($addformurl))).'</td>';
             }
+
             $htmlrows .= '<td><i class="fa fa-times-circle"></i></td>';
             $htmlrows .= html_writer::tag('td', $row->completed);
             $htmlrows .= ($row->aggregatedgrade->display != get_string('missinggrade', 'local_gugcat')) 
