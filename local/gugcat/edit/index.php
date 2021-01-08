@@ -74,9 +74,8 @@ if ($fromform = $mform->get_data()) {
         file_save_draft_area_files($fromform->userfile, $PAGE->context->id, 'grade_documentation', 'attachment',
                             $fromform->userfile, array('subdirs' => 0));
     }
-    $gradeitemid = local_gugcat::get_grade_item_id($courseid, $module->id, $gradereason);
-    $grades = local_gugcat::update_grade($studentid, $gradeitemid, $fromform->grade, $fromform->notes, $fromform->userfile);
-    local_gugcat::update_grade($studentid, local_gugcat::$PRVGRADEID, $fromform->grade);
+    $gradeitemid = local_gugcat::add_grade_item($courseid, $gradereason, $module);
+    $grades = local_gugcat::add_update_grades($studentid, $gradeitemid, $fromform->grade, $fromform->notes, $fromform->userfile);
     $url = '/local/gugcat/index.php?id='.$courseid.'&activityid='.$activityid;
     $url .= (($categoryid !== 0) ? '&categoryid='.$categoryid : null);
     header("Location:" .$CFG->wwwroot . $url);
