@@ -288,8 +288,6 @@ class local_gugcat {
         $grade_->userid = $userid;
         $grade_->overridden = $overridden;
         $grade_->timemodified = time();
-        if (!is_null($notes))
-            $grade_->feedback->$notes;
         //update existing grade
         return $grade_->update();
     }
