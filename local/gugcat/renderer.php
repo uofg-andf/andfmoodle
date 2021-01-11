@@ -96,7 +96,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
                 $row->provisionalgrade == get_string('missinggrade', 'local_gugcat'))
                 $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'. $isgradehidden.'</td>';
             else
-<               $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, $isgradehidden, false, htmlspecialchars_decode($editformurl), false).  $isgradehidden.'</td>';
+                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, $isgradehidden, false, htmlspecialchars_decode($editformurl), false).  $isgradehidden.'</td>';
             $htmlrows .= '<td>
                             <button type="button" class="btn btn-default addnewgrade" onclick="location.href=\''.$addformurl.'\'">
                                 '.get_string('addnewgrade', 'local_gugcat').'
