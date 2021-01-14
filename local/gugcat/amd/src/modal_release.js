@@ -14,14 +14,6 @@ define(['jquery', 'core/notification', 'core/custom_interaction_events', 'core/m
      */
     var ModalRelease = function(root) {
         Modal.call(this, root);
-
-        // if (!this.getFooter().find(SELECTORS.RELEASE_PROVISIONAL_GRADE_BUTTON).length) {
-        //     Notification.exception({message: 'No release provisional grade button found'});
-        // }
-
-        // if (!this.getFooter().find(SELECTORS.CANCEL_BUTTON).length) {
-        //     Notification.exception({message: 'No cancel button found'});
-        // }
     };
 
     ModalRelease.TYPE = 'local_gugcat-release';
