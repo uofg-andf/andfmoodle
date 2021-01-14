@@ -1,4 +1,4 @@
-// This file is part of Moodle - http://moodle.org/
+git // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  * @author     Accenture
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_release' ], function($, Str, ModalFactory, ModalLogin) {
+define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_release' ], function($, Str, ModalFactory, ModalRelease) {
 
     //Returns boolean on check of the current url and match it to the path params
     const checkCurrentUrl = function(path) {
@@ -112,7 +112,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_release'
                 break;
             case btn_release:
                 ModalFactory.create({
-                    type: ModalLogin.TYPE
+                    type: ModalRelease.TYPE
                 }, $("#btn-release")); 
                 break;
             case btn_import:
