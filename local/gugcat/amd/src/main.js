@@ -21,7 +21,7 @@ git // This file is part of Moodle - http://moodle.org/
  * @author     Accenture
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_release' ], function($, Str, ModalFactory, ModalRelease) {
+define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_release', 'core/templates' ], function($, Str, ModalFactory, ModalRelease, Templates) {
 
     //Returns boolean on check of the current url and match it to the path params
     const checkCurrentUrl = function(path) {
@@ -113,34 +113,17 @@ define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_release'
                 break;
             case btn_release:
                 (async () => {
-                    var body_content =  await Str.get_string('modalreleaseprovisionalgrade', 'local_gugcat');
-                    var cancel_btn =  await Str.get_string('cancelrelaseprovisionalgrade', 'local_gugcat');
-                    var confirm_btn = await Str.get_string('confirmreleaseprovisionalgrade', 'local_gugcat');
+                    var body_content = await Str.get_string('modalreleaseprovisionalgrade', 'local_gugcat');
+                    var str_cancel =  await Str.get_string('cancelrelaseprovisionalgrade', 'local_gugcat');
+                    var str_confirm = await Str.get_string('confirmreleaseprovisionalgrade', 'local_gugcat');
+                    var data_action = 'release';
 
                     ModalFactory.create({
                         type: ModalRelease.TYPE,
-                        body: 
-                        `<div class="container">
-                            <div class="row">
-                                <p class="modal-body-txt">
-                                    ${body_content}
-                                </p>
-                            </div>
-                        </div>`,
-                        footer:
-                        `<div class="row">
-                            <div class="col-lg-6 col-md-6">
-                                <button type="button" class="btn btn-default btn-default-padding btn-cancel-alignment" data-action="hide">
-                                    ${cancel_btn}
-                                </button>
-                            </div>
-                            <div class="col-lg-6 col-md-6">
-                                <button type="button" class="btn btn-default btn-approve" data-action="release" id="btn-confirm-to-release">
-                                    ${confirm_btn}
-                                </button>
-                            </div>
-                        </div>`
-                    }, $("#btn-release"));     
+                        body: Templates.render('local_gugcat/modal_body', {'bodycontent': body_content }),
+                        footer: Templates.render('local_gugcat/modal_footer', 
+                        {'strcancel': str_cancel, 'strconfirm': str_confirm, 'dataaction': data_action })
+                    }, $("#btn-release"));
                 })();
                 break;
             case btn_import:
