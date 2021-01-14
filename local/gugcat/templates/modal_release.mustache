@@ -2,27 +2,8 @@
     <div class="col-lg-4 col-md-4">
         {{$title}}{{/title}}
         {{$body}}
-            <div class="container">
-                <div class="row">
-                    <p class="modal-body-txt">
-                        WARNING: You are about to <br/>
-                        release the assessment's <br/>
-                        provisional grades to<br/>
-                        students - do you wish to<br/>
-                        continue?<br/>
-                    </p>
-                </div>
-            </div>
         {{/body}}
         {{$footer}}
-            <div class="row">
-                <div class="col-lg-6 col-md-6">
-                    <button type="button" class="btn btn-default btn-default-padding btn-cancel-alignment" data-action="hide">No, cancel action</button>
-                </div>
-                <div class="col-lg-6 col-md-6">
-                    <button type="button" class="btn btn-default btn-approve" data-action="release" id="btn-confirm-to-release">Yes, release provisional grades</button>
-                </div>
-            </div>
         {{/footer}}
     </div>
 {{/ core/modal }}
