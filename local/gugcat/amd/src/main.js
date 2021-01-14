@@ -21,7 +21,7 @@
  * @author     Accenture
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str' ], function($, Str) {
+define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_release' ], function($, Str, ModalFactory, ModalLogin) {
 
     //Returns boolean on check of the current url and match it to the path params
     const checkCurrentUrl = function(path) {
@@ -111,7 +111,9 @@ define(['jquery', 'core/str' ], function($, Str) {
                 $(".togglemultigrd").show();
                 break;
             case btn_release:
-                document.getElementById('release-submit').click();
+                ModalFactory.create({
+                    type: ModalLogin.TYPE
+                }, $("#btn-release")); 
                 break;
             case btn_import:
                 if(!$(".gradeitems").text().includes("Moodle Grade[Date]")){
