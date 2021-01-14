@@ -111,9 +111,36 @@ define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_release'
                 $(".togglemultigrd").show();
                 break;
             case btn_release:
-                ModalFactory.create({
-                    type: ModalRelease.TYPE
-                }, $("#btn-release")); 
+                (async () => {
+                    var body_content =  await Str.get_string('modalreleaseprovisionalgrade', 'local_gugcat');
+                    var cancel_btn =  await Str.get_string('cancelrelaseprovisionalgrade', 'local_gugcat');
+                    var confirm_btn = await Str.get_string('confirmreleaseprovisionalgrade', 'local_gugcat');
+
+                    ModalFactory.create({
+                        type: ModalRelease.TYPE,
+                        body: 
+                        `<div class="container">
+                            <div class="row">
+                                <p class="modal-body-txt">
+                                    ${body_content}
+                                </p>
+                            </div>
+                        </div>`,
+                        footer:
+                        `<div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                <button type="button" class="btn btn-default btn-default-padding btn-cancel-alignment" data-action="hide">
+                                    ${cancel_btn}
+                                </button>
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <button type="button" class="btn btn-default btn-approve" data-action="release" id="btn-confirm-to-release">
+                                    ${confirm_btn}
+                                </button>
+                            </div>
+                        </div>`
+                    }, $("#btn-release"));     
+                })();
                 break;
             case btn_import:
                 if(!$(".gradeitems").text().includes("Moodle Grade[Date]")){

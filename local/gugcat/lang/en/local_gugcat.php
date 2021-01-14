@@ -99,3 +99,7 @@ $string['gi_latepenalty'] = 'Late Penalty';
 $string['gi_moderatedgrade'] = 'Moderated Grade';
 $string['gi_secondgrade'] = 'Second Grade';
 $string['gi_thirdgrade'] = 'Third Grade';
+
+$string['modalreleaseprovisionalgrade'] = 'WARNING: You are about to <br/>release the assessment\'s <br/>provisional grades to<br/>students - do you wish to<br/>continue?<br/>';
+$string['cancelrelaseprovisionalgrade'] = 'No, cancel action';
+$string['confirmreleaseprovisionalgrade'] = 'Yes, release provisional grades';
