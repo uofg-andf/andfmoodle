@@ -94,6 +94,6 @@ function local_gugcat_pluginfile($course, $cm, $context, $filearea, $args, $forc
     if (!($file = $fs->get_file_by_hash(sha1($fullpath))) || $file->is_directory()) {
         return false;
     }
-        send_stored_file($file, 86400, 0, true, $options);
-        exit;
+    send_stored_file($file, 86400, 0, true, $options);
+    exit;
 }
