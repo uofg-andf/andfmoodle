@@ -112,18 +112,34 @@ define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_gcat', '
                 $(".togglemultigrd").show();
                 break;
             case btn_release:
-                (async () => {
-                    var body_content = await Str.get_string('modalreleaseprovisionalgrade', 'local_gugcat');
-                    var str_cancel =  await Str.get_string('cancelrelaseprovisionalgrade', 'local_gugcat');
-                    var str_confirm = await Str.get_string('confirmreleaseprovisionalgrade', 'local_gugcat');
-                    var data_action = 'release';
+                var strings = [
+                    {
+                        key: 'modalreleaseprovisionalgrade',
+                        component: 'local_gugcat'
+                    },
+                    {
+                        key: 'cancelrelaseprovisionalgrade',
+                        component: 'local_gugcat'
+                    },
+                    {
+                        key: 'confirmreleaseprovisionalgrade',
+                        component: 'local_gugcat'
+                    }
+                ];
 
-                    ModalFactory.create({
-                        type: ModalGcat.TYPE,
-                        body: Templates.render('local_gugcat/modal_body', {'bodycontent': body_content }),
-                        footer: Templates.render('local_gugcat/modal_footer', 
-                        {'strcancel': str_cancel, 'strconfirm': str_confirm, 'dataaction': data_action })
-                    }, $("#btn-release"));
+                (async () => {
+                    Str.get_strings(strings).then(function(langStrings){
+                        ModalFactory.create({
+                            type: ModalGcat.TYPE,
+                            body: Templates.render('local_gugcat/modal_body', {'bodycontent': langStrings[0] }),
+                            footer: Templates.render('local_gugcat/modal_footer', 
+                            {
+                                'strcancel': langStrings[1], 
+                                'strconfirm': langStrings[2], 
+                                'dataaction': 'release' 
+                            })
+                        }, $("#btn-release"));
+                    });
                 })();
                 break;
             case btn_import:
