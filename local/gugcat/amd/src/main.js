@@ -127,20 +127,18 @@ define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_gcat', '
                     }
                 ];
 
-                (async () => {
-                    Str.get_strings(strings).then(function(langStrings){
-                        ModalFactory.create({
-                            type: ModalGcat.TYPE,
-                            body: Templates.render('local_gugcat/modal_body', {'bodycontent': langStrings[0] }),
-                            footer: Templates.render('local_gugcat/modal_footer', 
-                            {
-                                'strcancel': langStrings[1], 
-                                'strconfirm': langStrings[2], 
-                                'dataaction': 'release' 
-                            })
-                        }, $("#btn-release"));
-                    });
-                })();
+                Str.get_strings(strings).then(function(langStrings){
+                    ModalFactory.create({
+                        type: ModalGcat.TYPE,
+                        body: Templates.render('local_gugcat/modal_body', {'bodycontent': langStrings[0] }),
+                        footer: Templates.render('local_gugcat/modal_footer', 
+                        {
+                            'strcancel': langStrings[1], 
+                            'strconfirm': langStrings[2], 
+                            'dataaction': 'release' 
+                        })
+                    }, $("#btn-release"));
+                });
                 break;
             case btn_import:
                 if(!$(".gradeitems").text().includes("Moodle Grade[Date]")){
