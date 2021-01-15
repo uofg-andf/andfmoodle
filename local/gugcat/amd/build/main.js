@@ -21,7 +21,7 @@
  * @author     Accenture
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_gcat', 'core/templates' ], function($, Str, ModalFactory, ModalGcat, Templates) {
+define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_gcat' ], function($, Str, ModalFactory, ModalGcat) {
 
     //Returns boolean on check of the current url and match it to the path params
     const checkCurrentUrl = function(path) {
@@ -128,16 +128,18 @@ define(['jquery', 'core/str', 'core/modal_factory', 'local_gugcat/modal_gcat', '
                 ];
 
                 Str.get_strings(strings).then(function(langStrings){
+                    
+                    var templateContext = {
+                        bodycontent: langStrings[0],
+                        strcancel: langStrings[1], 
+                        strconfirm: langStrings[2], 
+                        dataaction: 'release'
+                    };
+
                     ModalFactory.create({
-                        type: ModalGcat.TYPE,
-                        body: Templates.render('local_gugcat/modal_body', {'bodycontent': langStrings[0] }),
-                        footer: Templates.render('local_gugcat/modal_footer', 
-                        {
-                            'strcancel': langStrings[1], 
-                            'strconfirm': langStrings[2], 
-                            'dataaction': 'release' 
-                        })
-                    }, $("#btn-release"));
+                        type:ModalGcat.TYPE,
+                        templateContext: templateContext
+                    }, $("#btn-release"))
                 });
                 break;
             case btn_import:
