@@ -402,9 +402,10 @@ class local_gugcat {
                 if(!is_null($grd->information)){
                     $documentfields = 'contextid, component, filearea, itemid, filename';
                     $selectdocs = 'filename <> "." AND itemid='.$grd->information.' AND '.' filearea="attachment"'; 
-                    if($docs = $DB->get_record_select(FILES, $selectdocs, null, $documentfields))
+                    if($docs = $DB->get_record_select(FILES, $selectdocs, null, $documentfields)){
                         $grd->docs = moodle_url::make_pluginfile_url($docs->contextid, $docs->component, $docs->filearea, $docs->itemid, '/', $docs->filename);
                         $grd->docname = $docs->filename;
+                    }
                 }
                 array_push($grades_arr, $grd);
                 }
