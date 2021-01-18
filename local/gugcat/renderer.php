@@ -61,7 +61,6 @@ class local_gugcat_renderer extends plugin_renderer_base {
         //grade capture rows
         foreach ($rows as $row) {
             $addformurl->param('studentid', $row->studentno);
-            $editformurl->param('studentid', $row->studentno);
             $historyurl->param('studentid', $row->studentno);
             $historyurl->param('cnum', $row->cnum);
             $htmlrows .= html_writer::start_tag('tr');
@@ -163,10 +162,12 @@ class local_gugcat_renderer extends plugin_renderer_base {
         //url to grade form
         $actionurl = 'index.php?id=' . $courseid;
         $gradeformurl = new moodle_url('/local/gugcat/overview/gradeform/index.php', array('id' => $courseid));
-        $historyurl = new moodle_url('/local/gugcat/overview/history/index.php');
+        $editformurl = new moodle_url('/local/gugcat/edit/index.php', array('id' => $courseid));
+        $historyurl = new moodle_url('/local/gugcat/overview/history/index.php', array('id' => $courseid));
         //add category id in the url if not null
         if(!is_null($categoryid)){
             $gradeformurl .= '&categoryid=' . $categoryid;
+            $editformurl .= '&categoryid=' . $categoryid;
         }
 
         $htmlcolumns = null;
@@ -179,18 +180,21 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $htmlcolumns .= html_writer::tag('th', get_string('aggregatedgrade', 'local_gugcat').'<i class="fa fa-cog"></i></th>');
         $gradeformurl .= '&cnum=_cnum'; //add cnum in the url
         //grade capture rows
-      
+
         foreach ($rows as $row) {
+            $historyurl->param('cnum', $row->cnum);
+            $historyurl->param('studentid', $row->studentno);
             $htmlrows .= html_writer::start_tag('tr');
             $htmlrows .= html_writer::tag('td', $row->cnum);
             $htmlrows .= html_writer::tag('td', $row->studentno);
             $htmlrows .= html_writer::tag('td', $row->surname);
             $htmlrows .= html_writer::tag('td', $row->forename);
             foreach((array) $row->grades as $grade) {
-                $historyeditparams = $historyurl. '?id='.$courseid.'&activityid='.$grade->activityid.'&cnum='.$row->cnum;
+                $editformurl->param('activityid', $grade->activityid);
+                $historyurl->param('activityid', $grade->activityid);
                 $htmlrows .= html_writer::empty_tag('input', array('name' => 'finalgrades['.$row->studentno.'_'.$grade->activityid.']', 'type' => 'hidden', 'value' => ($grade->grade == get_string('nograderecorded', 'local_gugcat') ? "" : $grade->grade)));
                 $htmlrows .= html_writer::empty_tag('input', array('name' => 'cminstances['.$grade->activityid.']', 'type' => 'hidden', 'value' => $grade->activityinstance."_$grade->activity"));
-                $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, [htmlspecialchars_decode($historyeditparams)], true)).'</td>';
+                $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, [htmlspecialchars_decode($editformurl), htmlspecialchars_decode($historyurl)], true, true)).'</td>';
             }
             $classname = (is_null($row->resit) ? "fa fa-times-circle" : "fa fa-check-circle");
             $htmlrows .= '<td><i class="'.$classname.'"
@@ -309,6 +313,8 @@ class local_gugcat_renderer extends plugin_renderer_base {
         }else{
             $historylink = $is_historical ?  (count($link) == 2 ? $link[1] : $link[0]) : $link[0];
             $editlink = $link[0].'&overview='.($is_overviewpage ? 1 : 0);
+            //remove cnum for editlink
+            // $editlink = preg_replace('/&cnum=./i', '', $editlink);
 
             $html .= html_writer::tag('li', get_string('amendgrades', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$editlink.'\''));
             $html .= html_writer::tag('li', get_string('historicalamendments', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$historylink.'\''));
