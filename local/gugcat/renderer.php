@@ -63,7 +63,6 @@ class local_gugcat_renderer extends plugin_renderer_base {
             $addformurl->param('studentid', $row->studentno);
             $editformurl->param('studentid', $row->studentno);
             $historyurl->param('studentid', $row->studentno);
-            $editformurl->param('cnum', $row->cnum);
             $historyurl->param('cnum', $row->cnum);
             $htmlrows .= html_writer::start_tag('tr');
             //hidden inputs for id and provisional grades
