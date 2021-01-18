@@ -33,14 +33,15 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $categoryid = optional_param('categoryid', null, PARAM_INT);
         //url to add form
         $addformurl = new moodle_url('/local/gugcat/add/index.php', array('id' => $courseid, 'activityid' => $modid));
-        $editformurl = new moodle_url('/local/gugcat/edit/index.php', array('id' => $courseid, 'activityid' => $modid));
+        $historyeditparams = '?id='.$courseid;
+
         //url action form
         $actionurl = 'index.php?id=' . $courseid . '&activityid=' . $modid;
         //add category id in the url if not null
         if(!is_null($categoryid)){
             $addformurl->param('categoryid', $categoryid);
-            $editformurl->param('categoryid', $categoryid);
             $actionurl .= '&categoryid=' . $categoryid;
+            $historyeditparams .= '&categoryid=' . $categoryid;
         }
 
         //reindex activities and grades array
@@ -58,8 +59,6 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $htmlcolumns .= html_writer::empty_tag('th');
         //grade capture rows
         foreach ($rows as $row) {
-            $addformurl->param('studentid', $row->studentno);
-            $editformurl->param('studentid', $row->studentno);
             $htmlrows .= html_writer::start_tag('tr');
             //hidden inputs for id and provisional grades
             $htmlrows .= html_writer::empty_tag('input', array('name' => 'prvgrades['.$row->studentno.']', 'type' => 'hidden', 'value' => ($row->provisionalgrade == get_string('nograde', 'local_gugcat') ? "" : $row->provisionalgrade)));
@@ -95,8 +94,10 @@ class local_gugcat_renderer extends plugin_renderer_base {
                 $row->provisionalgrade == get_string('nograde', 'local_gugcat') || 
                 $row->provisionalgrade == get_string('missinggrade', 'local_gugcat'))
                 $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'. $isgradehidden.'</td>';
-            else
-                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, $isgradehidden, false, htmlspecialchars_decode($editformurl), false).  $isgradehidden.'</td>';
+            else{
+                $historyeditparams .= '&activityid='.$modid.'&cnum='.$row->cnum;
+                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, $isgradehidden, false, $historyeditparams, false).  $isgradehidden.'</td>';
+            }
             $htmlrows .= '<td>
                             <button type="button" class="btn btn-default addnewgrade" onclick="location.href=\''.$addformurl.'\'">
                                 '.get_string('addnewgrade', 'local_gugcat').'
@@ -175,7 +176,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $htmlcolumns .= html_writer::tag('th', get_string('aggregatedgrade', 'local_gugcat').'<i class="fa fa-cog"></i></th>');
         $gradeformurl .= '&cnum=_cnum'; //add cnum in the url
         //grade capture rows
-      
+
         foreach ($rows as $row) {
             $htmlrows .= html_writer::start_tag('tr');
             $htmlrows .= html_writer::tag('td', $row->cnum);
@@ -183,10 +184,11 @@ class local_gugcat_renderer extends plugin_renderer_base {
             $htmlrows .= html_writer::tag('td', $row->surname);
             $htmlrows .= html_writer::tag('td', $row->forename);
             foreach((array) $row->grades as $grade) {
-                $historyeditparams = '?id='.$courseid.'&activityid='.$grade->activityid.'&cnum='.$row->cnum;
+                $historyeditcategory = (is_null($categoryid)) ? '' : '&categoryid=' . $categoryid;
+                $historyeditparams = '?id='.$courseid.'&activityid='.$grade->activityid.'&cnum='.$row->cnum . $historyeditcategory;
                 $htmlrows .= html_writer::empty_tag('input', array('name' => 'finalgrades['.$row->studentno.'_'.$grade->activityid.']', 'type' => 'hidden', 'value' => ($grade->grade == get_string('nograderecorded', 'local_gugcat') ? "" : $grade->grade)));
                 $htmlrows .= html_writer::empty_tag('input', array('name' => 'cminstances['.$grade->activityid.']', 'type' => 'hidden', 'value' => $grade->activityinstance."_$grade->activity"));
-                $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, htmlspecialchars_decode($historyeditparams), true)).'</td>';
+                $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, $historyeditparams, true)).'</td>';
             }
             $classname = (is_null($row->resit) ? "fa fa-times-circle" : "fa fa-check-circle");
             $htmlrows .= '<td><i class="'.$classname.'"
@@ -298,12 +300,12 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $html .= html_writer::start_tag('ul', array('class' => 'dropdown-menu'));
         $link .= '&studentid='.$studentno;
         if($is_aggregrade){
-            $adjustlink = $link . '&setting=' . ADJUST_WEIGHT_FORM;
+            $adjustlink = $link. '&setting=' . ADJUST_WEIGHT_FORM;
             $overridelink = $link . '&setting=' . OVERRIDE_GRADE_FORM;
             $html .= html_writer::tag('li', get_string('adjustcourseweight', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$adjustlink.'\''));
             $html .= html_writer::tag('li', get_string('overrideggregrade', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$overridelink.'\''));
         }else{
-            $historylink = new moodle_url('/local/gugcat/overview/history/index.php').$link;
+            $historylink = new moodle_url('/local/gugcat/history/index.php').$link;
             $editlink = new moodle_url('/local/gugcat/edit/index.php').$link.'&overview='.($is_overviewpage ? 1 : 0);
             //remove cnum for editlink
             $editlink = preg_replace('/&cnum=./i', '', $editlink);
