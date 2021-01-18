@@ -310,8 +310,6 @@ class local_gugcat_renderer extends plugin_renderer_base {
         }else{
             $historylink = $is_historical ?  (count($link) == 2 ? $link[1] : $link[0]) : $link[0];
             $editlink = $link[0].'&overview='.($is_overviewpage ? 1 : 0);
-            //remove cnum for editlink
-            $editlink = preg_replace('/&cnum=./i', '', $editlink);
 
             $html .= html_writer::tag('li', get_string('amendgrades', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$editlink.'\''));
             $html .= html_writer::tag('li', get_string('historicalamendments', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$historylink.'\''));
