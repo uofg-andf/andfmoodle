@@ -33,14 +33,15 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $categoryid = optional_param('categoryid', null, PARAM_INT);
         //url to add form
         $addformurl = new moodle_url('/local/gugcat/add/index.php', array('id' => $courseid, 'activityid' => $modid));
-        $editformurl = new moodle_url('/local/gugcat/edit/index.php', array('id' => $courseid, 'activityid' => $modid));
+        $historyeditparams = '?id='.$courseid;
+
         //url action form
         $actionurl = 'index.php?id=' . $courseid . '&activityid=' . $modid;
         //add category id in the url if not null
         if(!is_null($categoryid)){
             $addformurl->param('categoryid', $categoryid);
-            $editformurl->param('categoryid', $categoryid);
             $actionurl .= '&categoryid=' . $categoryid;
+            $historyeditparams .= '&categoryid=' . $categoryid;
         }
 
         //reindex activities and grades array
@@ -58,8 +59,6 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $htmlcolumns .= html_writer::empty_tag('th');
         //grade capture rows
         foreach ($rows as $row) {
-            $addformurl->param('studentid', $row->studentno);
-            $editformurl->param('studentid', $row->studentno);
             $htmlrows .= html_writer::start_tag('tr');
             //hidden inputs for id and provisional grades
             $htmlrows .= html_writer::empty_tag('input', array('name' => 'prvgrades['.$row->studentno.']', 'type' => 'hidden', 'value' => ($row->provisionalgrade == get_string('nograde', 'local_gugcat') ? "" : $row->provisionalgrade)));
@@ -95,8 +94,11 @@ class local_gugcat_renderer extends plugin_renderer_base {
                 $row->provisionalgrade == get_string('nograde', 'local_gugcat') || 
                 $row->provisionalgrade == get_string('missinggrade', 'local_gugcat'))
                 $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'. $isgradehidden.'</td>';
-            else
-                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, $isgradehidden, false, htmlspecialchars_decode($editformurl), false).  $isgradehidden.'</td>';
+            else{
+                $historyeditparams .= '&activityid='.$modid.'&cnum='.$row->cnum;
+                $htmlrows .= '<td class="provisionalgrade"><b>'.$row->provisionalgrade.'</b>'.$this->context_actions($row->studentno, $isgradehidden, false, $historyeditparams, false).  $isgradehidden.'</td>';
+            }
+            $addformurl .= '&studentid='. $row->studentno;
             $htmlrows .= '<td>
                             <button type="button" class="btn btn-default addnewgrade" onclick="location.href=\''.$addformurl.'\'">
                                 '.get_string('addnewgrade', 'local_gugcat').'
@@ -155,16 +157,16 @@ class local_gugcat_renderer extends plugin_renderer_base {
     public function display_aggregation_tool($rows, $activities) {
         $courseid = $this->page->course->id;
         $categoryid = optional_param('categoryid', null, PARAM_INT);
-    
-        //url to add form
-        $editformurl = new moodle_url('/local/gugcat/edit/index.php', array('id' => $courseid));
 
         //url to grade form
         $actionurl = 'index.php?id=' . $courseid;
         $gradeformurl = new moodle_url('/local/gugcat/overview/gradeform/index.php', array('id' => $courseid));
+        $editformurl = new moodle_url('/local/gugcat/edit/index.php', array('id' => $courseid));
+        $historyurl = new moodle_url('/local/gugcat/overview/history/index.php', array('id' => $courseid));
         //add category id in the url if not null
         if(!is_null($categoryid)){
             $gradeformurl .= '&categoryid=' . $categoryid;
+            $actionurl .= '&categoryid=' . $categoryid;
         }
 
         $htmlcolumns = null;
@@ -177,19 +179,21 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $htmlcolumns .= html_writer::tag('th', get_string('aggregatedgrade', 'local_gugcat').'<i class="fa fa-cog"></i></th>');
         $gradeformurl .= '&cnum=_cnum'; //add cnum in the url
         //grade capture rows
-      
+
         foreach ($rows as $row) {
-            $editformurl->param('studentid', $row->studentno);
+            $historyurl->param('cnum', $row->cnum);
+            $historyurl->param('studentid', $row->studentno);
             $htmlrows .= html_writer::start_tag('tr');
             $htmlrows .= html_writer::tag('td', $row->cnum);
             $htmlrows .= html_writer::tag('td', $row->studentno);
             $htmlrows .= html_writer::tag('td', $row->surname);
             $htmlrows .= html_writer::tag('td', $row->forename);
             foreach((array) $row->grades as $grade) {
-                $editformurl->param('activityid', $grade->activityid);
+                $historyeditcategory = (is_null($categoryid)) ? '' : '&categoryid=' . $categoryid;
+                $historyeditparams = '?id='.$courseid.'&activityid='.$grade->activityid.'&cnum='.$row->cnum . $historyeditcategory;
                 $htmlrows .= html_writer::empty_tag('input', array('name' => 'finalgrades['.$row->studentno.'_'.$grade->activityid.']', 'type' => 'hidden', 'value' => ($grade->grade == get_string('nograderecorded', 'local_gugcat') ? "" : $grade->grade)));
                 $htmlrows .= html_writer::empty_tag('input', array('name' => 'cminstances['.$grade->activityid.']', 'type' => 'hidden', 'value' => $grade->activityinstance."_$grade->activity"));
-                $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, htmlspecialchars_decode($editformurl), true)).'</td>';
+                $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, $historyeditparams, true)).'</td>';
             }
             $classname = (is_null($row->resit) ? "fa fa-times-circle" : "fa fa-check-circle");
             $htmlrows .= '<td><i class="'.$classname.'"
@@ -215,6 +219,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $html .= $this->display_table($htmlrows, $htmlcolumns);
         $html .= html_writer::empty_tag('input', array('id'=>'resitstudentno', 'name' => 'rowstudentno', 'type' => 'hidden'));
         $html .= html_writer::empty_tag('button', array('id'=>'resit-submit', 'name'=> 'resit', 'type'=>'submit'));
+        $html .= html_writer::empty_tag('button', array('id'=>'downloadcsv-submit', 'name'=> 'downloadcsv', 'type'=>'submit'));
         $html .= html_writer::empty_tag('button', array('id'=>'finalrelease-submit', 'name'=> 'finalrelease', 'type'=>'submit'));
         $html .= html_writer::end_tag('form');
         $html .= $this->footer();
@@ -242,15 +247,47 @@ class local_gugcat_renderer extends plugin_renderer_base {
         return $html;
     }
 
-    private function display_table($rows, $columns) {
+    public function display_grade_history($student, $activity, $rows){
+        $htmlcolumns = null;
+        $htmlrows = null;
+        $htmlcolumns .= html_writer::tag('th', 'Date & Time');
+        $htmlcolumns .= html_writer::tag('th', 'Grade');
+        $htmlcolumns .= html_writer::tag('th', 'Revised By');
+        $htmlcolumns .= html_writer::tag('th', 'Type');
+        $htmlcolumns .= html_writer::tag('th', 'Notes / Reason for Revision');
+        $htmlcolumns .= html_writer::tag('th', 'Attachments');
+        foreach($rows as $row){
+            $htmlrows .= html_writer::start_tag('tr');
+            $htmlrows .= html_writer::tag('td', $row->date);
+            $htmlrows .= html_writer::tag('td', $row->grade);
+            $htmlrows .= html_writer::tag('td', $row->modby);
+            $htmlrows .= html_writer::tag('td', $row->type);
+            $htmlrows .= html_writer::tag('td', $row->notes);
+
+            $htmlrows .= '<td>'.(!is_null($row->docs) ? '<a href = '.$row->docs.'>'.$row->docname : null) .'</td>';
+            $htmlrows .= html_writer::end_tag('tr');
+        }
+        $html = $this->header();
+        $html .= $this->render_from_template('local_gugcat/gcat_grade_history', (object)[
+            'title' =>get_string('historicalamendments', 'local_gugcat'),
+            'student' => $student,
+            'activity' => $activity
+        ]);
+        $html .= $this->display_table($htmlrows, $htmlcolumns, true);
+        return $html;
+    }
+
+    private function display_table($rows, $columns, $history=false) {
         $html = html_writer::start_tag('div', array('class' => 'table-responsive'));
         $html .= html_writer::start_tag('table', array('class' => 'table'));
         $html .= html_writer::start_tag('thead');
         $html .= html_writer::start_tag('tr');
-        $html .= html_writer::tag('th', get_string('candidateno', 'local_gugcat'));
-        $html .= html_writer::tag('th', get_string('studentno', 'local_gugcat'));
-        $html .= html_writer::tag('th', get_string('surname', 'local_gugcat'));
-        $html .= html_writer::tag('th', get_string('forename', 'local_gugcat'));
+        if(!$history){
+            $html .= html_writer::tag('th', get_string('candidateno', 'local_gugcat'));
+            $html .= html_writer::tag('th', get_string('studentno', 'local_gugcat'));
+            $html .= html_writer::tag('th', get_string('surname', 'local_gugcat'));
+            $html .= html_writer::tag('th', get_string('forename', 'local_gugcat'));
+        }
         $html .= $columns;
         $html .= html_writer::end_tag('tr');
         $html .= html_writer::end_tag('thead');
@@ -263,19 +300,23 @@ class local_gugcat_renderer extends plugin_renderer_base {
         return $html;
     }
 
-    private function context_actions($studentno, $ishidden=null, $is_aggregrade = false, $link = null, $is_overviewpage = false) {
+    private function context_actions($studentno, $ishidden=null, $is_aggregrade = false, $link = null, $is_overviewpage = false, $is_historical = false) {
         $html = html_writer::tag('i', null, array('class' => 'fa fa-ellipsis-h', 'data-toggle' => 'dropdown'));
         $html .= html_writer::start_tag('ul', array('class' => 'dropdown-menu'));
+        $link .=  '&studentid='.$studentno;
         if($is_aggregrade){
-            $link .= '&studentid='.$studentno;
-            $adjustlink = $link . '&setting=' . ADJUST_WEIGHT_FORM;
+            $adjustlink = $link. '&setting=' . ADJUST_WEIGHT_FORM;
             $overridelink = $link . '&setting=' . OVERRIDE_GRADE_FORM;
             $html .= html_writer::tag('li', get_string('adjustcourseweight', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$adjustlink.'\''));
             $html .= html_writer::tag('li', get_string('overrideggregrade', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$overridelink.'\''));
         }else{
-            $link .= '&overview='.($is_overviewpage ? 1 : 0); 
-            $html .= html_writer::tag('li', get_string('amendgrades', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$link.'\''));
-            $html .= html_writer::tag('li', get_string('historicalamendments', 'local_gugcat'), array('class' => 'dropdown-item'));
+            $historylink = new moodle_url('/local/gugcat/history/index.php').$link;
+            $editlink = new moodle_url('/local/gugcat/edit/index.php').$link.'&overview='.($is_overviewpage ? 1 : 0);
+            //remove cnum for editlink
+            $editlink = preg_replace('/&cnum=./i', '', $editlink);
+
+            $html .= html_writer::tag('li', get_string('amendgrades', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$editlink.'\''));
+            $html .= html_writer::tag('li', get_string('historicalamendments', 'local_gugcat'), array('class' => 'dropdown-item', 'onclick' => 'location.href=\''.$historylink.'\''));
             $html .= html_writer::tag('li', !empty($ishidden) ? get_string('showgrade', 'local_gugcat') : get_string('hidefromstudent', 'local_gugcat'), array('class' => 'dropdown-item hide-show-grade',
                 'onclick'=>
                 'document.getElementById("studentno").value = '.$studentno.';
