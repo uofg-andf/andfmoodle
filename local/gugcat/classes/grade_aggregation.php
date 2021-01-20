@@ -136,7 +136,6 @@ class grade_aggregation{
                 if(!(max(array_keys(local_gugcat::$GRADES)) >= 22)){
                     local_gugcat::set_grade_scale(null);
                 }
-                $aggrdobj = new stdClass();
                 $aggrdobj->grade = local_gugcat::convert_grade($aggrade);
                 $aggrdobj->rawgrade = $rawaggrade;
                 $aggrdobj->display = in_array(get_string('nograderecorded', 'local_gugcat'), array_column($gradecaptureitem->grades, 'grade'))
