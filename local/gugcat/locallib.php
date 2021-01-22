@@ -82,12 +82,30 @@ class local_gugcat {
         $activityid = optional_param('activityid', null, PARAM_INT);
         $categoryid = optional_param('categoryid', null, PARAM_INT);
         $mods = grade_get_gradable_activities($courseid);
+        echo '<pre>';
+    
+
+        //get whole grading forums
+        $wholegradingforums = self::grade_get_gradable_activities($courseid, 'forum', 1);
+   
+        // var_dump($wholegradingforums);
+        // var_dump(count($wholegradingforums));
+
         $activities = array();
-        if($mods){
+        if(count($mods) > 0 || count($wholegradingforums) > 0){
             foreach($mods as $cm) {
-                $activities[$cm->id] = $cm;
-                $activities[$cm->id]->selected = (strval($activityid) === $cm->id)? 'selected' : '';
-                $activities[$cm->id]->gradeitem = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$cm->modname, 'iteminstance'=>$cm->instance, 'courseid'=>$courseid, 'itemnumber'=>0));
+                $cm->name = $cm->modname == 'forum' ? get_string('gradeitemnameforrating', 'forum', $cm) :  $cm->name;
+                $gi = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$cm->modname, 'iteminstance'=>$cm->instance, 'courseid'=>$courseid, 'itemnumber'=>0));
+                $activities[$gi->id]= $cm;
+                $activities[$gi->id]->gradeitem = $gi;
+                $activities[$gi->id]->selected = (strval($activityid) === $gi->id)? 'selected' : '';
+            }
+            foreach($wholegradingforums as $cm) {
+                $cm->name = $cm->modname == 'forum' ? get_string('gradeitemnameforwholeforum', 'forum', $cm) :  $cm->name;
+                $gi = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$cm->modname, 'iteminstance'=>$cm->instance, 'courseid'=>$courseid, 'itemnumber'=>1));
+                $activities[$gi->id]= $cm;
+                $activities[$gi->id]->gradeitem = $gi;
+                $activities[$gi->id]->selected = (strval($activityid) === $gi->id)? 'selected' : '';
             }
             if(!is_null($categoryid) && $categoryid !== 0){
                 foreach ($activities as $key=>$activity) {
@@ -97,7 +115,10 @@ class local_gugcat {
                 }
             }
         }
+        echo '</pre>';
         return $activities;
+        
+        
     }
 
     /**
@@ -439,4 +460,39 @@ class local_gugcat {
             }
         }
     }
+    //get gradeable activities
+    private static function grade_get_gradable_activities($courseid, $modulename='', $itemnumber = 0) {
+        global $DB;
+        if (empty($modulename)) {
+            if (!$modules = $DB->get_records('modules', array('visible' => '1'))) {
+                return false;
+            }
+            $result = array();
+            foreach ($modules as $module) {
+                if ($cms = grade_get_gradable_activities($courseid, $module->name)) {
+                    $result =  $result + $cms;
+                }
+            }
+            if (empty($result)) {
+                return false;
+            } else {
+                return $result;
+            }
+        }
+        $params = array($courseid, $modulename, $itemnumber, GRADE_TYPE_NONE, $modulename);
+        $sql = "SELECT cm.*, m.name, md.name as modname
+                  FROM {grade_items} gi, {course_modules} cm, {modules} md, {{$modulename}} m
+                 WHERE gi.courseid = ? AND
+                       gi.itemtype = 'mod' AND
+                       gi.itemmodule = ? AND
+                       gi.itemnumber = ? AND
+                       gi.gradetype != ? AND
+                       gi.iteminstance = cm.instance AND
+                       cm.instance = m.id AND
+                       md.name = ? AND
+                       md.id = cm.module";
+    
+        return $DB->get_records_sql($sql, $params);
+    }
+    
 }
