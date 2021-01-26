@@ -31,6 +31,8 @@ require_once('locallib.php');
 $courseid = required_param('id', PARAM_INT);
 $activityid = optional_param('activityid', null, PARAM_INT);
 $categoryid = optional_param('categoryid', null, PARAM_INT);
+$page = optional_param('page', 0, PARAM_INT);  
+
 $URL = new moodle_url('/local/gugcat/index.php', array('id' => $courseid));
 is_null($activityid) ? null : $URL->param('activityid', $activityid);
 is_null($categoryid) ? null : $URL->param('categoryid', $categoryid);
@@ -47,9 +49,10 @@ $coursecontext = context_course::instance($courseid);
 $PAGE->set_context($coursecontext);
 $PAGE->set_course($course);
 $PAGE->set_heading($course->fullname);
+
+//Retrieve activities
 $activities = local_gugcat::get_activities($courseid);
 $selectedmodule = null;
-$groupid = 0;
 $groups = null;
 $valid_22point_scale = false;
 
@@ -69,14 +72,19 @@ if(!empty($activities)){
     local_gugcat::set_grade_scale($scaleid);
 }
 
-if (!empty($groups)){
+//Retrieve students
+$limitfrom = $page * GCAT_MAX_USERS_PER_PAGE;
+$limitnum  = GCAT_MAX_USERS_PER_PAGE;
+$totalenrolled = count_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable');
+
+if(!empty($groups)){
     $students = Array();
     foreach ($groups as $group) {
-        $groupstudents = get_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable', $group->id);
+        $groupstudents = get_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable', $group->id, 'u.*', null, $limitfrom, $limitnum);
         $students += $groupstudents;
     }
 }else{
-    $students = get_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable', $groupid);
+    $students = get_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable', 0, 'u.*', null, $limitfrom, $limitnum);
 }
 
 if(!is_null($courseid) && !is_null($categoryid)){
@@ -149,4 +157,5 @@ if(!empty($activities))
     $PAGE->set_cm($selectedmodule);
 $renderer = $PAGE->get_renderer('local_gugcat');
 echo $renderer->display_grade_capture($selectedmodule, $activities, $rows, $columns);
+echo $OUTPUT->paging_bar($totalenrolled, $page, $limitnum, $PAGE->url);
 echo $OUTPUT->footer();

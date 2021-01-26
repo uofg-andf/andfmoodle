@@ -30,6 +30,8 @@ require_once($CFG->dirroot . '/local/gugcat/locallib.php');
 
 $courseid = required_param('id', PARAM_INT);
 $categoryid = optional_param('categoryid', null, PARAM_INT);
+$page = optional_param('page', 0, PARAM_INT);  
+
 $URL = new moodle_url('/local/gugcat/overview/index.php', array('id' => $courseid));
 $indexurl = new moodle_url('/local/gugcat/index.php', array('id' => $courseid));
 
@@ -48,7 +50,13 @@ $coursecontext = context_course::instance($courseid);
 $PAGE->set_context($coursecontext);
 $PAGE->set_course($course);
 $PAGE->set_heading($course->fullname);
-$students = get_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable');
+//Retrieve students
+$limitfrom = $page * GCAT_MAX_USERS_PER_PAGE;
+$limitnum  = GCAT_MAX_USERS_PER_PAGE;
+$totalenrolled = count_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable');
+$students = get_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable', 0, 'u.*', null, $limitfrom, $limitnum);
+
+//Retrieve activities
 $activities = local_gugcat::get_activities($courseid);
 $rows = grade_aggregation::get_rows($course, $activities, $students);
 
@@ -88,4 +96,5 @@ if(isset($requireresit) && !empty($rowstudentid)){
 echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('local_gugcat');
 echo $renderer->display_aggregation_tool($rows, $activities);
+echo $OUTPUT->paging_bar($totalenrolled, $page, $limitnum, $PAGE->url);
 echo $OUTPUT->footer();
