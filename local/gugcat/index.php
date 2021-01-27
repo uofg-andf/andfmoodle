@@ -36,6 +36,7 @@ $page = optional_param('page', 0, PARAM_INT);
 $URL = new moodle_url('/local/gugcat/index.php', array('id' => $courseid));
 is_null($activityid) ? null : $URL->param('activityid', $activityid);
 is_null($categoryid) ? null : $URL->param('categoryid', $categoryid);
+$page == 0 ? null : $URL->param('page', $page);
 require_login($courseid);
 $PAGE->set_url($URL);
 $PAGE->set_title(get_string('gugcat', 'local_gugcat'));
@@ -98,25 +99,20 @@ local_gugcat::set_prv_grade_id($courseid, $selectedmodule);
 
 //---------submit grade capture table
 $release = optional_param('release', null, PARAM_NOTAGS);
+$multiadd = optional_param('multiadd', null, PARAM_NOTAGS);
 $gradeitem = optional_param('reason', null, PARAM_NOTAGS);
 $importgrades = optional_param('importgrades', null, PARAM_NOTAGS);
 $showhidegrade = optional_param('showhidegrade', null, PARAM_NOTAGS);
 $rowstudentid = optional_param('rowstudentno', null, PARAM_NOTAGS);
-$prvgrades = optional_param_array('prvgrades', null, PARAM_NOTAGS);
 $newgrades = optional_param_array('newgrades', null, PARAM_NOTAGS);
-if (isset($release) && isset($prvgrades)){
-    if(count(array_filter($prvgrades)) > 0){
-        grade_capture::release_prv_grade($courseid, $selectedmodule, array_filter($prvgrades));
-        local_gugcat::notify_success('successrelease');
-    }else{
-        local_gugcat::notify_error('errornoprvgrades');
-    }
+if (isset($release)){
+    grade_capture::release_prv_grade($courseid, $selectedmodule);
+    local_gugcat::notify_success('successrelease');
     unset($release);
-    unset($prvgrades);
     redirect($URL);
     exit;
-}else if (!empty($gradeitem)){
-    if(isset($newgrades)){
+}else if (isset($multiadd)){
+    if(isset($newgrades) && !empty($gradeitem)){
         $gradeitemid = local_gugcat::add_grade_item($courseid, $gradeitem, $selectedmodule);
         foreach ($newgrades as $id=>$item) {
             if(isset($item)){
@@ -125,13 +121,14 @@ if (isset($release) && isset($prvgrades)){
             }
         }
         local_gugcat::notify_success('successaddall');
-        unset($gradeitem);
-        unset($newgrades);
-        redirect($URL);
-        exit;
     }else{
-        print_error('errorrequired', 'local_gugcat', $PAGE->url);
+        local_gugcat::notify_error('errorrequired');
     }
+    unset($multiadd);
+    unset($gradeitem);
+    unset($newgrades);
+    redirect($URL);
+    exit;
 }else if(isset($importgrades)){
     if ($valid_22point_scale){
         grade_capture::import_from_gradebook($courseid, $selectedmodule, $activities);

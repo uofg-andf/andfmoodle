@@ -67,8 +67,6 @@ class local_gugcat_renderer extends plugin_renderer_base {
                 $addformurl->param('categoryid', $categoryid);
             }
             $htmlrows .= html_writer::start_tag('tr');
-            //hidden inputs for id and provisional grades
-            $htmlrows .= html_writer::empty_tag('input', array('name' => 'prvgrades['.$row->studentno.']', 'type' => 'hidden', 'value' => ($row->provisionalgrade == get_string('nograde', 'local_gugcat') ? "" : $row->provisionalgrade)));
             $htmlrows .= html_writer::tag('td', $row->idnumber);
             if(!$is_blind_marking){
                 $htmlrows .= html_writer::tag('td', $row->surname, array('class' => 'blind-marking'));
@@ -129,6 +127,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $html .= html_writer::start_tag('form', array('id' => 'multigradesform', 'method' => 'post', 'action' => $actionurl));
         $html .= $this->display_table($htmlrows, $htmlcolumns);
         $html .= html_writer::empty_tag('button', array('id' => 'release-submit', 'name' => 'release', 'type' => 'submit'));
+        $html .= html_writer::empty_tag('button', array('id' => 'multiadd-submit', 'name' => 'multiadd', 'type' => 'submit'));
         $html .= html_writer::empty_tag('button', array('id'=>'importgrades-submit', 'name'=> 'importgrades', 'type'=>'submit'));
         $html .= html_writer::empty_tag('input', array('name' => 'rowstudentno', 'type' => 'hidden', 'id'=>'studentno'));
         $html .= html_writer::empty_tag('button', array('id'=>'showhidegrade-submit', 'name'=> 'showhidegrade', 'type'=>'submit'));
@@ -186,7 +185,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         }
         $htmlcolumns .= html_writer::tag('th', get_string('requiresresit', 'local_gugcat'));
         $htmlcolumns .= html_writer::tag('th', get_string('percentcomplete', 'local_gugcat'));
-        $htmlcolumns .= html_writer::tag('th', get_string('aggregatedgrade', 'local_gugcat').'<i class="fa fa-cog"></i></th>');
+        $htmlcolumns .= html_writer::tag('th', get_string('aggregatedgrade', 'local_gugcat'));
         $gradeformurl .= '&cnum=_cnum'; //add cnum in the url
         //grade capture rows
 
@@ -200,8 +199,6 @@ class local_gugcat_renderer extends plugin_renderer_base {
             }
             foreach((array) $row->grades as $grade) {
                 $ammendgradeparams = '?id='.$courseid.'&activityid='.$grade->activityid . $historyeditcategory;
-                $htmlrows .= html_writer::empty_tag('input', array('name' => 'finalgrades['.$row->studentno.'_'.$grade->activityid.']', 'type' => 'hidden', 'value' => ($grade->grade == get_string('nograderecorded', 'local_gugcat') || $grade->grade == get_string('nograderesit', 'local_gugcat') ? "" : $grade->grade)));
-                $htmlrows .= html_writer::empty_tag('input', array('name' => 'cminstances['.$grade->activityid.']', 'type' => 'hidden', 'value' => $grade->activityinstance."_$grade->activity"));
                 $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, $ammendgradeparams, true)).'</td>';
             }
             $classname = (is_null($row->resit) ? "fa fa-times-circle" : "fa fa-check-circle");

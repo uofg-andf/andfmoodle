@@ -36,6 +36,7 @@ $URL = new moodle_url('/local/gugcat/overview/index.php', array('id' => $coursei
 $indexurl = new moodle_url('/local/gugcat/index.php', array('id' => $courseid));
 
 is_null($categoryid) ? null : $URL->param('categoryid', $categoryid);
+$page == 0 ? null : $URL->param('page', $page);
 require_login($courseid);
 $PAGE->set_url($URL);
 $PAGE->set_title(get_string('gugcat', 'local_gugcat'));
@@ -73,17 +74,8 @@ if(isset($requireresit) && !empty($rowstudentid)){
     redirect($URL);
     exit;
 }else if(isset($finalrelease)){
-    if(!in_array("", $finalgrades)){
-        $students = array();
-        foreach($finalgrades as $key=>$value) {
-            $ids = explode('_', $key); //0 = student id, 1 = activity id
-            $students[$ids[0]][$ids[1]] = array_search($value, local_gugcat::$GRADES);
-        }
-        grade_aggregation::release_final_grades($courseid, $cminstances, $students);      
-    }
+    grade_aggregation::release_final_grades($courseid); 
     unset($finalrelease);
-    unset($finalgrades);
-    unset($cminstances);
     redirect($URL);
     exit;
 }else if(isset($downloadcsv)){
