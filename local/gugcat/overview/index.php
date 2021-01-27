@@ -36,7 +36,7 @@ $URL = new moodle_url('/local/gugcat/overview/index.php', array('id' => $coursei
 $indexurl = new moodle_url('/local/gugcat/index.php', array('id' => $courseid));
 
 is_null($categoryid) ? null : $URL->param('categoryid', $categoryid);
-$page == 0 ? null : $URL->param('page', $page);
+$page !== 0 ? $URL->param('page', $page) : null;
 require_login($courseid);
 $PAGE->set_url($URL);
 $PAGE->set_title(get_string('gugcat', 'local_gugcat'));

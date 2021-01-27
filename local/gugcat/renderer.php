@@ -31,10 +31,11 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $modid = (($selectedmodule) ? $selectedmodule->gradeitemid : null);
         $is_blind_marking = local_gugcat::is_blind_marking($this->page->cm);
         $categoryid = optional_param('categoryid', null, PARAM_INT);
-        $ammendgradeparams = '?id=' . $courseid . '&activityid=' . $modid;
+        $page = optional_param('page', 0, PARAM_INT);
+        $ammendgradeparams = "?id=$courseid&activityid=$modid&page=$page";
 
         //url action form
-        $actionurl = 'index.php?id=' . $courseid . '&activityid=' . $modid;
+        $actionurl = "index.php?id=$courseid&activityid=$modid&page=$page";
         //add category id in the url if not null
         if(!is_null($categoryid)){
             $actionurl .= '&categoryid=' . $categoryid;
@@ -62,7 +63,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         //grade capture rows
         foreach ($rows as $row) {
             //url to add new grade
-            $addformurl = new moodle_url('/local/gugcat/add/index.php', array('id' => $courseid, 'activityid' => $modid, 'studentid' => $row->studentno));
+            $addformurl = new moodle_url('/local/gugcat/add/index.php', array('id' => $courseid, 'activityid' => $modid, 'studentid' => $row->studentno, 'page' => $page));
             if (!is_null($categoryid)){
                 $addformurl->param('categoryid', $categoryid);
             }
@@ -165,11 +166,12 @@ class local_gugcat_renderer extends plugin_renderer_base {
     public function display_aggregation_tool($rows, $activities) {
         $courseid = $this->page->course->id;
         $categoryid = optional_param('categoryid', null, PARAM_INT);
+        $page = optional_param('page', 0, PARAM_INT);  
         $is_blind_marking = local_gugcat::is_blind_marking();
 
         //url to grade form
-        $gradeformurl = new moodle_url('/local/gugcat/overview/gradeform/index.php', array('id' => $courseid));
-        $actionurl = 'index.php?id=' . $courseid;
+        $gradeformurl = new moodle_url('/local/gugcat/overview/gradeform/index.php', array('id' => $courseid, 'page' => $page));
+        $actionurl = "index.php?id=$courseid&page=$page";
         //add category id in the url if not null
         $historyeditcategory = null;
         if(!is_null($categoryid)){
@@ -198,7 +200,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
                 $htmlrows .= html_writer::tag('td', $row->forename, array('class' => 'blind-marking'));
             }
             foreach((array) $row->grades as $grade) {
-                $ammendgradeparams = '?id='.$courseid.'&activityid='.$grade->activityid . $historyeditcategory;
+                $ammendgradeparams = "?id=$courseid&activityid=$grade->activityid&page=$page" . $historyeditcategory;
                 $htmlrows .= '<td>'.$grade->grade.((strpos($grade->grade, 'No grade') !== false) ? null : $this->context_actions($row->studentno, null, false, $ammendgradeparams, true)).'</td>';
             }
             $classname = (is_null($row->resit) ? "fa fa-times-circle" : "fa fa-check-circle");
