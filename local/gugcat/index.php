@@ -33,10 +33,9 @@ $activityid = optional_param('activityid', null, PARAM_INT);
 $categoryid = optional_param('categoryid', null, PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);  
 
-$URL = new moodle_url('/local/gugcat/index.php', array('id' => $courseid));
+$URL = new moodle_url('/local/gugcat/index.php', array('id' => $courseid, 'page' => $page));
 is_null($activityid) ? null : $URL->param('activityid', $activityid);
 is_null($categoryid) ? null : $URL->param('categoryid', $categoryid);
-$page !== 0 ? $URL->param('page', $page) : null;
 require_login($courseid);
 $PAGE->set_url($URL);
 $PAGE->set_title(get_string('gugcat', 'local_gugcat'));

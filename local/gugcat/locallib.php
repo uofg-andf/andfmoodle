@@ -45,7 +45,7 @@ define('UNDER_INVESTIGATION', -6);
 define('AU', -7);
 define('FC', -8);
 
-define('GCAT_MAX_USERS_PER_PAGE', 3);
+define('GCAT_MAX_USERS_PER_PAGE', 50);
 
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot . '/grade/querylib.php');
