@@ -85,8 +85,8 @@ class grade_aggregation{
             $mod->grades = $grades;
             array_push($gradebook, $mod);
         }
-
-        $i = 1;
+        $page = optional_param('page', 0, PARAM_INT);  
+        $i = $page * GCAT_MAX_USERS_PER_PAGE + 1;
         foreach ($students as $student) {
             $gradecaptureitem = new gcat_item();
             $gradecaptureitem->cnum = $i;
