@@ -134,7 +134,7 @@ if (isset($release) && isset($prvgrades)){
     }
 }else if(isset($importgrades)){
     if ($valid_22point_scale){
-        grade_capture::import_from_gradebook($courseid, $selectedmodule, $students, $activities);
+        grade_capture::import_from_gradebook($courseid, $selectedmodule, $activities);
         local_gugcat::notify_success('successimport');
     }else{
         local_gugcat::notify_error('importerror');

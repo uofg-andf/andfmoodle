@@ -24,6 +24,7 @@
 namespace local_gugcat;
 
 use assign;
+use context_course;
 use context_module;
 use grade_item;
 use grade_grade;
@@ -172,6 +173,7 @@ class grade_capture{
         if (local_gugcat::is_grademax22($cm->gradeitem->gradetype, $cm->gradeitem->grademax)){
             $gradescaleoffset = 1;
         }
+        $students = get_enrolled_users(context_course ::instance($courseid), 'moodle/competency:coursecompetencygradable');
 
         //get grade item
         $gradeitem = new grade_item($data, true);
@@ -181,6 +183,12 @@ class grade_capture{
             $is_workflow_enabled = $assign->get_instance()->markingworkflow == 1;
         }
         foreach ($grades as $userid=>$grd)  {
+            $fields = 'rawgrade, finalgrade, hidden';
+            $prvgrd = $DB->get_record('grade_grades', array('itemid'=>local_gugcat::$PRVGRADEID, 'userid' => $userid), $fields);
+            echo '<pre>';
+            var_dump($prvgrd);
+            echo '</pre>';
+
             $hidden = $DB->get_field('grade_grades', 'hidden', array('itemid'=>local_gugcat::$PRVGRADEID, 'userid' => $userid));
             $select = "itemid = $gradeitemid AND userid = $userid";
             //update hidden status
@@ -238,7 +246,7 @@ class grade_capture{
         $gradeitem->update();
     }
 
-    public static function import_from_gradebook($courseid, $module, $students, $activities){
+    public static function import_from_gradebook($courseid, $module, $activities){
         $mggradeitemid = local_gugcat::add_grade_item($courseid, get_string('moodlegrade', 'local_gugcat'), $module);
 
         $gradeitem_ = new grade_item(array('id'=>$mggradeitemid), true);
@@ -246,6 +254,7 @@ class grade_capture{
         //update timemodified gradeitem
         $gradeitem_->update();
         $grade = null;
+        $students = get_enrolled_users(context_course ::instance($courseid), 'moodle/competency:coursecompetencygradable');
         
         $gbgrades = grade_get_grades($courseid, 'mod', $module->modname, $module->instance, array_keys($students));
         $gbgradeitem = array_values(array_filter($gbgrades->items, function($item) use($module){

@@ -24,6 +24,7 @@
 namespace local_gugcat;
 
 use ArrayObject;
+use context_course;
 use local_gugcat;
 use stdClass;
 use grade_grade;
@@ -226,12 +227,14 @@ class grade_aggregation{
         local_gugcat::notify_success('successfinalrelease');
     }
 
-    public static function export_aggregation_tool($course, $modules, $students){
+    public static function export_aggregation_tool($course){
         $table = get_string('aggregationtool', 'local_gugcat');
         $filename = "export_$table"."_".date('Y-m-d_His');    
         $columns = ['candidate_number', 'student_number'];
         $is_blind_marking = local_gugcat::is_blind_marking();
         $is_blind_marking ? null : array_push($columns, ...array('surname', 'forename'));
+        $students = get_enrolled_users(context_course::instance($course->id), 'moodle/competency:coursecompetencygradable');
+        $modules = local_gugcat::get_activities($course->id, true);
         //Process the activity names
         $activities = array();
         foreach($modules as $cm) {

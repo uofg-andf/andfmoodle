@@ -87,7 +87,7 @@ if(isset($requireresit) && !empty($rowstudentid)){
     redirect($URL);
     exit;
 }else if(isset($downloadcsv)){
-    grade_aggregation::export_aggregation_tool($course, $activities, $students);
+    grade_aggregation::export_aggregation_tool($course);
     unset($downloadcsv);
     redirect($URL);
     exit;

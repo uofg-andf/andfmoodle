@@ -45,7 +45,7 @@ define('UNDER_INVESTIGATION', -6);
 define('AU', -7);
 define('FC', -8);
 
-define('GCAT_MAX_USERS_PER_PAGE', 50);
+define('GCAT_MAX_USERS_PER_PAGE', 3);
 
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot . '/grade/querylib.php');
@@ -78,10 +78,11 @@ class local_gugcat {
      * Returns all activities/modules for specific course
      *
      * @param int $courseid
+     * @param boolean $all - If true, gets all modules regardless of category
      */
-    public static function get_activities($courseid){
+    public static function get_activities($courseid, $all = false){
         $activityid = optional_param('activityid', null, PARAM_INT);
-        $categoryid = optional_param('categoryid', null, PARAM_INT);
+        $categoryid = $all ? null : optional_param('categoryid', null, PARAM_INT);
         $mods = self::grade_get_gradable_activities($courseid);
     
         //get whole grading forums and workshop assessment | itemnumber = 1
