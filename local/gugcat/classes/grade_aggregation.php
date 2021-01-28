@@ -322,6 +322,23 @@ class grade_aggregation{
                 }
             }
         }
+        $i = count($rows);
+        foreach($modules as $mod){
+            //add first course grade history
+            $grditemresit = self::is_resit($mod);
+            if(!$grditemresit){
+                $prvgrdid = local_gugcat::set_prv_grade_id($course->id, $mod);
+                $sql = 'SELECT * FROM mdl_grade_grades_history WHERE information IS NOT NULL AND rawgrade IS NOT NULL AND itemid='.$prvgrdid.' AND '.' userid="'.$student->id.'" ORDER BY id LIMIT 1';
+                $gradehistory = $DB->get_record_sql($sql);
+                isset($rows[$i]) ? null : $rows[$i] = new stdClass();
+                isset($rows[$i]->grades) ? null : $rows[$i]->grades = array();
+                $rows[$i]->timemodified = $gradehistory->timemodified;
+                $rows[$i]->date = date("j/n", strtotime(userdate($gradehistory->timemodified))).'<br>'.date("h:i", strtotime(userdate($gradehistory->timemodified)));
+                $rows[$i]->modby = get_string('nogradeweight','local_gugcat');
+                $rows[$i]->notes = get_string('nogradeweight','local_gugcat');
+                array_push($rows[$i]->grades, $gradehistory);
+            }
+        }
 
         foreach($rows as $row) {
             $sumgrade = 0;
@@ -353,6 +370,10 @@ class grade_aggregation{
                 array_push($rows, $ovgrade);
             }
         }
+
+        
+
+        
         //sort array by timemodified
         usort($rows,function($first,$second){
             return $first->timemodified < $second->timemodified;
