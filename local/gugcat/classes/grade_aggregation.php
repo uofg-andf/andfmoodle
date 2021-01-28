@@ -370,10 +370,6 @@ class grade_aggregation{
                 array_push($rows, $ovgrade);
             }
         }
-
-        
-
-        
         //sort array by timemodified
         usort($rows,function($first,$second){
             return $first->timemodified < $second->timemodified;
