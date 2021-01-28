@@ -302,7 +302,8 @@ class grade_aggregation{
             local_gugcat::set_grade_scale($scaleid);
             $grades = new stdClass();
             //get provisional grades
-            $prvgrdid = local_gugcat::set_prv_grade_id($course->id, $mod);
+            $prvgrdstr = get_string('provisionalgrd', 'local_gugcat');
+            $prvgrdid = local_gugcat::get_grade_item_id($course->id, $mod->gradeitemid, $prvgrdstr);
             $sort = 'id';
             $fields = 'id, itemid, rawgrade, finalgrade, feedback, timemodified, usermodified';
             $select = 'feedback IS NOT NULL AND rawgrade IS NOT NULL AND itemid='.$prvgrdid.' AND '.' userid="'.$student->id.'"'; 
@@ -327,7 +328,8 @@ class grade_aggregation{
             //add first course grade history
             $grditemresit = self::is_resit($mod);
             if(!$grditemresit){
-                $prvgrdid = local_gugcat::set_prv_grade_id($course->id, $mod);
+                $prvgrdstr = get_string('provisionalgrd', 'local_gugcat');
+                $prvgrdid = local_gugcat::get_grade_item_id($course->id, $mod->gradeitemid, $prvgrdstr);
                 $sql = 'SELECT * FROM mdl_grade_grades_history WHERE information IS NOT NULL AND rawgrade IS NOT NULL AND itemid='.$prvgrdid.' AND '.' userid="'.$student->id.'" ORDER BY id LIMIT 1';
                 $gradehistory = $DB->get_record_sql($sql);
                 isset($rows[$i]) ? null : $rows[$i] = new stdClass();
