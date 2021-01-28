@@ -49,6 +49,8 @@ $coursecontext = context_course::instance($courseid);
 $PAGE->set_context($coursecontext);
 $PAGE->set_course($course);
 $PAGE->set_heading($course->fullname);
+require_capability('local/gugcat:view', $coursecontext);
+
 //Retrieve students
 $limitfrom = $page * GCAT_MAX_USERS_PER_PAGE;
 $limitnum  = GCAT_MAX_USERS_PER_PAGE;
