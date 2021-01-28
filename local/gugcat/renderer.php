@@ -334,8 +334,8 @@ class local_gugcat_renderer extends plugin_renderer_base {
             }
             $html .= html_writer::tag('th', get_string('studentno', 'local_gugcat'), array('class' => 'sortable'));
             if(!$is_blind_marking){
-                $html .= html_writer::tag('th', get_string('surname', 'local_gugcat'), array('class' => 'blind-marking sortable', 'data-column'=>1));
-                $html .= html_writer::tag('th', get_string('forename', 'local_gugcat'), array('class' => 'blind-marking sortable', 'data-column'=>2));
+                $html .= html_writer::tag('th', get_string('surname', 'local_gugcat'), array('class' => 'blind-marking sortable'));
+                $html .= html_writer::tag('th', get_string('forename', 'local_gugcat'), array('class' => 'blind-marking sortable'));
             }
         }
         $html .= $columns;
