@@ -300,10 +300,8 @@ class grade_aggregation{
             //get provisional grades
             $prvgrdstr = get_string('provisionalgrd', 'local_gugcat');
             $prvgrdid = local_gugcat::get_grade_item_id($course->id, $mod->gradeitemid, $prvgrdstr);
-            $sort = 'id';
-            $fields = 'id, itemid, rawgrade, finalgrade, feedback, timemodified, usermodified';
-            $select = 'feedback IS NOT NULL AND rawgrade IS NOT NULL AND itemid='.$prvgrdid.' AND '.' userid="'.$student->id.'"'; 
-            $gradehistory_arr = $DB->get_records_select('grade_grades_history', $select, null, $fields);
+            $sql = 'SELECT * FROM mdl_grade_grades_history WHERE feedback IS NOT NULL AND information IS NOT NULL AND rawgrade IS NOT NULL AND itemid='.$prvgrdid.' AND '.' userid="'.$student->id.'" ORDER BY id DESC';
+            $gradehistory_arr = $DB->get_records_sql($sql);
             if($gradehistory_arr > 0){
                 foreach($gradehistory_arr as $gradehistory){
                     isset($rows[$i]) ? null : $rows[$i] = new stdClass();
@@ -356,7 +354,7 @@ class grade_aggregation{
         //add overridden grades in 
         $fields = 'id, itemid, rawgrade, finalgrade, feedback, timemodified, usermodified';
         $select = 'feedback IS NOT NULL AND rawgrade IS NOT NULL AND itemid='.$aggradeid.' AND '.' userid="'.$student->id.'"'; 
-        $gradehistory_overridden = $DB->get_records_select('grade_grades_history', $select, null, $fields);
+        $gradehistory_overridden = $DB->get_records_select('grade_grades_history', $select, null, null, $fields);
         if($gradehistory_overridden > 0){
             foreach($gradehistory_overridden as $overriddengrade){
                 $ovgrade = new stdClass();
