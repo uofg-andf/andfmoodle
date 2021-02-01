@@ -388,7 +388,7 @@ class local_gugcat {
     /**
      * Removes ungraded grade versions and provisional grade
      * 
-     * @param mixed $gradeitems graded gradeversions.
+     * @param array $gradeitems graded gradeversions.
      * @param int $studentid student's user id.
      */
     public static function filter_grade_version($gradeitems, $studentid){

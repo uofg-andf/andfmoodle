@@ -321,7 +321,7 @@ class grade_aggregation{
      * 
      * @param mixed $course 
      * @param array $modules
-     * @param int $student 
+     * @param mixed $student 
      */
     public static function get_course_grade_history($course, $modules, $student){
         global $DB;
