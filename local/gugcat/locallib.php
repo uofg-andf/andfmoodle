@@ -514,7 +514,7 @@ class local_gugcat {
      * Returns rows of grade version history
      * 
      * @param int $courseid
-     * @param array $module select course module
+     * @param mixed $module select course module
      * @param int $studentid student's user id
      * 
      * 

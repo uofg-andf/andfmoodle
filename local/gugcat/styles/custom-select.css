@@ -39,7 +39,6 @@ select::-ms-expand {
     border: 1px solid #E0E2E9;
     -ms-word-break: normal;
     word-break: normal;
-    outline: none;
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
