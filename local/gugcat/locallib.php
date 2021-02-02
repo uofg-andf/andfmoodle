@@ -507,6 +507,18 @@ class local_gugcat {
                 return true;
             case MEDICAL_EXEMPTION:
                 return true;
+            case CREDIT_WITHHELD:
+                return true;
+            case CREDIT_REFUSED:
+                return true;
+            case CA:
+                return true;    
+            case UNDER_INVESTIGATION:
+                return true;
+            case AU:
+                return true;
+            case FC:
+                return true;    
             default:
                 return false;
         }
