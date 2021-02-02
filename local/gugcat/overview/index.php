@@ -60,7 +60,7 @@ $groupingids = array_column($activities, 'groupingid');
 //Retrieve students
 $limitfrom = $page * GCAT_MAX_USERS_PER_PAGE;
 $limitnum  = GCAT_MAX_USERS_PER_PAGE;
-$totalenrolled = count_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable');
+$totalenrolled = count_enrolled_users($coursecontext, 'local/gugcat:gradeable');
 if(array_sum($groupingids) != 0){
     $groups = array();
     foreach ($groupingids as $groupingid) {
@@ -71,12 +71,12 @@ if(array_sum($groupingids) != 0){
     $students = Array();
     if(!empty($groups)){
         foreach ($groups as $group) {
-            $groupstudents = get_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable', $group->id, 'u.*', null, $limitfrom, $limitnum);
+            $groupstudents = get_enrolled_users($coursecontext, 'local/gugcat:gradeable', $group->id, 'u.*', null, $limitfrom, $limitnum);
             $students += $groupstudents;
         }
     }
 }else{
-    $students = get_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable', 0, 'u.*', null, $limitfrom, $limitnum);
+    $students = get_enrolled_users($coursecontext, 'local/gugcat:gradeable', 0, 'u.*', null, $limitfrom, $limitnum);
 }
 
 $rows = grade_aggregation::get_rows($course, $activities, $students);
