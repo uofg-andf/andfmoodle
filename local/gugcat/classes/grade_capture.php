@@ -241,6 +241,8 @@ class grade_capture{
                     $DB->set_field_select('grade_grades', 'overridden', time(), $select);
                 }
             }
+            else
+                local_gugcat::add_update_grades($student->id, local_gugcat::$PRVGRADEID, null);
         }
         //unhide gradeitem 
         $gradeitem->hidden = 0;
