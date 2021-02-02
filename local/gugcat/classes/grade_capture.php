@@ -98,11 +98,8 @@ class grade_capture{
                 $trdgrade = (!$thirdgradeid) ? null : (isset($gradeitems[$thirdgradeid]->grades[$student->id]) ? $gradeitems[$thirdgradeid]->grades[$student->id]->grade : null);
 
                 foreach ($gradeitems as $item) {
-                    if(isset($item->grades[$student->id]->hidden)){
-                        if($item->grades[$student->id]->hidden == 1)
-
-                            $gradecaptureitem->hidden = true;
-                    }
+                    if(isset($item->grades[$student->id]->hidden) && $item->grades[$student->id]->hidden == 1)
+                        $gradecaptureitem->hidden = true;
                     if($item->id != local_gugcat::$PRVGRADEID && $item->id != $firstgradeid){
                         $rawgrade = (isset($item->grades[$student->id])) ? $item->grades[$student->id]->grade : null; 
                         $grdobj = new stdClass();
