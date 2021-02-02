@@ -114,10 +114,12 @@ class local_gugcat {
                 }
             }
             else{
-                $categories = self::get_grade_categories($courseid);
-                foreach ($activities as $key=>$activity){
-                    if($categories[$activity->gradeitem->categoryid]->key != "null"){
-                        unset($activities[$key]);
+                if($includegradeitem){
+                    $categories = self::get_grade_categories($courseid);
+                    foreach ($activities as $key=>$activity){
+                        if($categories[$activity->gradeitem->categoryid]->key != "null"){
+                            unset($activities[$key]);
+                        }
                     }
                 }
             }

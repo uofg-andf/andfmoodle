@@ -133,7 +133,7 @@ class grade_aggregation{
                     $grdobj->activityinstance = $item->instance;
                     $grdobj->activity = $item->name;
                     $grdobj->grade = $grade;
-                    $grdobj->rawgrade = $grdvalue;
+                    $grdobj->rawgrade = ($grade == MEDICAL_EXEMPTION_AC ||$grade == NON_SUBMISSION_AC) ? get_string('nogradeweight', 'local_gugcat') : $grdvalue;
                     $grdobj->weight =  round((float)$weight * 100 );
                     array_push($gradecaptureitem->grades, $grdobj);
                 }
@@ -284,7 +284,7 @@ class grade_aggregation{
             //check if grade is aggregated 
             $isaggregated = ($row->aggregatedgrade->display != get_string('missinggrade', 'local_gugcat')) ? true : false;
             $student->aggregated_grade = $isaggregated ? $row->aggregatedgrade->grade : null;
-            $student->aggregated_grade_numeric = $isaggregated ?  $row->aggregatedgrade->rawgrade : null;
+            $student->aggregated_grade_numeric = $isaggregated ?  ($row->aggregatedgrade->rawgrade < 0 ? get_string('nogradeweight', 'local_gugcat') : $row->aggregatedgrade->rawgrade) : null;
             $student->resit_required = is_null($row->resit) ? 'N' : 'Y';
             array_push($array, $student);
         }
