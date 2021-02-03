@@ -4,8 +4,6 @@
 @import url("modal.css");
 
 .gcat-title{
-    font-size: 18px;
-    font-style: normal;
     font-weight: 700;
     line-height: 32px;
     letter-spacing: 0em;
@@ -36,6 +34,7 @@ td > i, th > i {
 
 .fa-times-circle{
     font-size: 20px;
+    color: #949494;
 }
 
 .fa-ellipsis-h{
@@ -59,11 +58,7 @@ td > i, th > i {
     border: 1px solid #005c8a;
     color: #005c8a;
     border-radius: 8px;
-    outline: none;
     white-space: nowrap;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
     line-height: 21px;
     letter-spacing: 0em;
     text-align: center;
@@ -137,11 +132,6 @@ td > i, th > i {
     /* width: 100%; */
 }
 
-.multi-select-grade select, 
-.multi-select-reason select{
-    font-size: 12px;
-}
-
 .input-reason{
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -158,13 +148,11 @@ td > i, th > i {
     border: 1px solid #E0E2E9;
     -ms-word-break: normal;
     word-break: normal;
-    outline: none;
     display: none;
     width: auto;
 }
 
 .addnewgrade{
-    font-size: 12px;
     margin: auto;
 }
 
@@ -204,7 +192,6 @@ td > .grade-discrepancy{
 }
 
 .dropdown-item {
-    font-size: 11px;
     padding: .2rem;
     cursor: pointer;
 }
@@ -213,9 +200,12 @@ td > .grade-discrepancy{
     background-color: #005c8a;
 }
 
+td a:hover, .dropdown-item a:hover {
+    text-decoration: none;
+}
+
 /* Hide submit buttons */
 #release-submit, #importgrades-submit, 
-#resit-submit,#showhidegrade-submit,
 #finalrelease-submit, #downloadcsv-submit,
 #multiadd-submit {
     position: absolute;

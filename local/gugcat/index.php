@@ -39,7 +39,7 @@ is_null($categoryid) ? null : $URL->param('categoryid', $categoryid);
 require_login($courseid);
 $PAGE->set_url($URL);
 $PAGE->set_title(get_string('gugcat', 'local_gugcat'));
-
+$PAGE->navbar->add(get_string('navname', 'local_gugcat'), $URL);
 $PAGE->requires->css('/local/gugcat/styles/gugcat.css');
 $PAGE->requires->js_call_amd('local_gugcat/main', 'init');
 
@@ -78,23 +78,16 @@ $groups = groups_get_all_groups($course->id, 0, $groupingid);
 //Retrieve students
 $limitfrom = $page * GCAT_MAX_USERS_PER_PAGE;
 $limitnum  = GCAT_MAX_USERS_PER_PAGE;
-$totalenrolled = count_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable');
+$totalenrolled = count_enrolled_users($coursecontext, 'local/gugcat:gradable');
 
 if($groupingid != 0 && !empty($groups)){
     $students = Array();
     foreach ($groups as $group) {
-        $groupstudents = get_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable', $group->id, 'u.*', null, $limitfrom, $limitnum);
+        $groupstudents = get_enrolled_users($coursecontext, 'local/gugcat:gradable', $group->id, 'u.*', null, $limitfrom, $limitnum);
         $students += $groupstudents;
     }
-    if(count($students) === 0){
-        $students = get_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable', 0, 'u.*', null, $limitfrom, $limitnum);
-    }
 }else{
-    $students = get_enrolled_users($coursecontext, 'moodle/competency:coursecompetencygradable', 0, 'u.*', null, $limitfrom, $limitnum);
-}
-
-if(!is_null($courseid) && !is_null($categoryid)){
-    $PAGE->navbar->add(get_string('navname', 'local_gugcat'), $URL);
+    $students = get_enrolled_users($coursecontext, 'local/gugcat:gradable', 0, 'u.*', null, $limitfrom, $limitnum);
 }
 
 //Populate static $STUDENTS
@@ -108,7 +101,7 @@ $multiadd = optional_param('multiadd', null, PARAM_NOTAGS);
 $gradeitem = optional_param('reason', null, PARAM_NOTAGS);
 $importgrades = optional_param('importgrades', null, PARAM_NOTAGS);
 $showhidegrade = optional_param('showhidegrade', null, PARAM_NOTAGS);
-$rowstudentid = optional_param('rowstudentno', null, PARAM_NOTAGS);
+$rowstudentid = optional_param('studentid', null, PARAM_NOTAGS);
 $newgrades = optional_param_array('newgrades', null, PARAM_NOTAGS);
 // Process release provisional grades
 if (isset($release)){
