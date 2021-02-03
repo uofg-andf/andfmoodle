@@ -552,15 +552,6 @@ class local_gugcat {
                  : $gradeitem->itemname;
                 $grd->date = date("j/n", strtotime(userdate($grd->timemodified))).'<br>'.date("h:i", strtotime(userdate($grd->timemodified)));
                 $grd->grade = !is_null($grd->finalgrade) ? self::convert_grade($grd->finalgrade) : self::convert_grade($grd->rawgrade);
-                $grd->docs = null;
-                if(!is_null($grd->information)){
-                    $documentfields = 'contextid, component, filearea, itemid, filename';
-                    $selectdocs = 'filename <> "." AND itemid='.$grd->information.' AND '.' filearea="attachment"'; 
-                    if($docs = $DB->get_record_select('files', $selectdocs, null, $documentfields)){
-                        $grd->docs = moodle_url::make_pluginfile_url($docs->contextid, $docs->component, $docs->filearea, $docs->itemid, '/', $docs->filename);
-                        $grd->docname = $docs->filename;
-                    }
-                }
                 array_push($grades_arr, $grd);
                 }
             }
