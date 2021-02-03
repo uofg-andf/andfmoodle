@@ -720,7 +720,7 @@ class local_gugcat {
     }
 
     /**
-     * Returns value of intvalue
+     * Returns intvalue of checkbox
      * @param int $instanceid 
      * @param int $contextid 
      */
