@@ -628,11 +628,7 @@ class local_gugcat {
                     $result =  $result + $cms;
                 }
             }
-            if (empty($result)) {
-                return false;
-            } else {
-                return $result;
-            }
+            return $result;
         }
         $params = array($courseid, $modulename, $itemnumber, GRADE_TYPE_NONE, $modulename);
         $sql = "SELECT cm.*, gi.itemname as name, md.name as modname, gi.id as gradeitemid

@@ -3,6 +3,14 @@
 @import url("custom-select.css");
 @import url("modal.css");
 
+#region-main {
+    overflow-x: visible;
+    min-width: 100%;
+    width: auto;
+    display: inline-flex;
+    flex-direction: column;
+}
+
 .gcat-title{
     font-weight: 700;
     line-height: 32px;
