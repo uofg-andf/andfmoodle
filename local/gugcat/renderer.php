@@ -229,8 +229,8 @@ class local_gugcat_renderer extends plugin_renderer_base {
             $htmlrows .= html_writer::tag('td', html_writer::tag('a', null, array('class' => $classname, 'href' => $requireresiturl)));
             $htmlrows .= html_writer::tag('td', $row->completed);
             $htmlrows .= ($row->aggregatedgrade->display != get_string('missinggrade', 'local_gugcat')) 
-            ? html_writer::start_tag('td').$row->aggregatedgrade->display.$this->context_actions($row->studentno, null, true, $courseformhistoryparams, true).html_writer::end_tag('td')
-            : html_writer::tag('td', $row->aggregatedgrade->display);
+            ? html_writer::start_tag('td').str_replace(")", "0)", $row->aggregatedgrade->display).$this->context_actions($row->studentno, null, true, $courseformhistoryparams, true).html_writer::end_tag('td')
+            : html_writer::tag('td', str_replace(")", "0)", $row->aggregatedgrade->display));
             $htmlrows .= html_writer::end_tag('tr');
         }
         $hide_release = in_array(get_string('missinggrade', 'local_gugcat'), array_column(array_column($rows, 'aggregatedgrade'), 'display'));
