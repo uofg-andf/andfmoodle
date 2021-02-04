@@ -293,6 +293,7 @@ class local_gugcat_testcase extends advanced_testcase {
         $switchdisplay = local_gugcat::switch_display_of_assessment_on_student_dashboard($instanceid, $contextid);
 
         $this->assertEquals(0, $switchdisplay);
+        $this->assertEquals(1, $switchdisplay);
     }
 
     public function test_get_value_of_customfield_checkbox(){
