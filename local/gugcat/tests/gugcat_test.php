@@ -49,6 +49,8 @@ class local_gugcat_testcase extends advanced_testcase {
         $assign = $gen->create_module('assign', array('id' => 1, 'course' => $this->course->id));
         $modulecontext = context_module::instance($assign->cmid);
         $assign = new assign($modulecontext, false, false);
+        $assignid = $DB->get_field('grade_items', 'id', array('courseid' => $this->course->id, 'itemmodule' => 'assign'));
+        $DB->set_field('grade_items', 'grademax', '22.00000', array('id'=>$assignid));
         $cm = local_gugcat::get_activities($this->course->id);
         $key = key($cm);
         $this->cm = $cm[$key];
