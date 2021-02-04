@@ -290,10 +290,12 @@ class local_gugcat_testcase extends advanced_testcase {
         $customfieldddata = local_gugcat::default_contextfield_data_value($customfieldfield->id, $instanceid, $contextid);
         $customfielddata = $DB->insert_record('customfield_data', $customfieldddata);
 
-        $switchdisplay = local_gugcat::switch_display_of_assessment_on_student_dashboard($instanceid, $contextid);
+        $switchdisplayoff = local_gugcat::switch_display_of_assessment_on_student_dashboard($instanceid, $contextid);
 
-        $this->assertEquals(0, $switchdisplay);
-        $this->assertEquals(1, $switchdisplay);
+        $this->assertEquals(0, $switchdisplayoff);
+
+        $switchdisplayon = local_gugcat::switch_display_of_assessment_on_student_dashboard($instanceid, $contextid);
+        $this->assertEquals(1, $switchdisplayon);
     }
 
     public function test_get_value_of_customfield_checkbox(){
