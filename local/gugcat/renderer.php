@@ -101,9 +101,10 @@ class local_gugcat_renderer extends plugin_renderer_base {
                             'reason',
                             get_string('selectreason', 'local_gugcat'),
                             'multi-select-reason',
-                            'select-grade-reason').'
-                            <input name="reason" value="" class="input-reason" id="input-reason" type="text"/>
-                    </td>';
+                            'select-grade-reason').
+                            html_writer::empty_tag('input', array('type' => 'text', 'name' => 'reason', 'id' => 'input-reason', 
+                            'class' => 'input-reason', 'onkeypress' => "return event.keyCode != 13;"))
+                    .'</td>';
             $isgradehidden = (!isset($row->hidden)) ? null: (($row->hidden) ? '<br/>('.get_string('hiddengrade', 'local_gugcat').')' : '');
             if(is_null($row->provisionalgrade) || $row->provisionalgrade == '' || 
                 $row->provisionalgrade == get_string('nograde', 'local_gugcat') || 
@@ -135,6 +136,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $html .= $this->render_from_template('local_gugcat/gcat_tab_header', $tabheader);
         $html .= html_writer::start_tag('form', array('id' => 'multigradesform', 'method' => 'post', 'action' => $actionurl));
         $html .= $this->display_table($htmlrows, $htmlcolumns);
+        $html .= html_writer::empty_tag('button', array('id' => 'search-submit', 'type' => 'submit'));
         $html .= html_writer::empty_tag('button', array('id' => 'release-submit', 'name' => 'release', 'type' => 'submit'));
         $html .= html_writer::empty_tag('button', array('id' => 'multiadd-submit', 'name' => 'multiadd', 'type' => 'submit'));
         $html .= html_writer::empty_tag('button', array('id'=>'importgrades-submit', 'name'=> 'importgrades', 'type'=>'submit'));
@@ -371,6 +373,8 @@ class local_gugcat_renderer extends plugin_renderer_base {
      */
     private function display_table($rows, $columns, $history = false, $aggregation = false) {
         $is_blind_marking = local_gugcat::is_blind_marking($this->page->cm);
+        $searchicon = html_writer::tag('i', null, array('class' => 'fa fa-search', 'role' =>'button', 'tabindex' =>'0'));
+        $searchbar = html_writer::empty_tag('input', array('type' => 'text', 'name' => 'search[]', 'class' => 'input-search', 'placeholder' => get_string('search', 'local_gugcat')));
         $html = html_writer::start_tag('table', array('id'=>'gcat-table', 'class' => 'table'));
         $html .= html_writer::start_tag('thead');
         $html .= html_writer::start_tag('tr');
@@ -378,10 +382,10 @@ class local_gugcat_renderer extends plugin_renderer_base {
             if($aggregation){
                 $html .= html_writer::tag('th', get_string('candidateno', 'local_gugcat'), array('class' => 'sortable'));
             }
-            $html .= html_writer::tag('th', get_string('studentno', 'local_gugcat'), array('class' => 'sortable'));
+            $html .= html_writer::tag('th', html_writer::tag('span',  get_string('studentno', 'local_gugcat'), array('class' => 'sortable')).$searchicon.$searchbar);
             if(!$is_blind_marking){
-                $html .= html_writer::tag('th', get_string('surname', 'local_gugcat'), array('class' => 'blind-marking sortable'));
-                $html .= html_writer::tag('th', get_string('forename', 'local_gugcat'), array('class' => 'blind-marking sortable'));
+                $html .= html_writer::tag('th', html_writer::tag('span',  get_string('surname', 'local_gugcat'), array('class' => 'sortable')).$searchicon.$searchbar, array('class' => 'blind-marking'));
+                $html .= html_writer::tag('th', html_writer::tag('span',  get_string('forename', 'local_gugcat'), array('class' => 'sortable')).$searchicon.$searchbar, array('class' => 'blind-marking'));
             }
         }
         $html .= $columns;

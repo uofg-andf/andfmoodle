@@ -105,6 +105,8 @@ $importgrades = optional_param('importgrades', null, PARAM_NOTAGS);
 $showhidegrade = optional_param('showhidegrade', null, PARAM_NOTAGS);
 $rowstudentid = optional_param('studentid', null, PARAM_NOTAGS);
 $newgrades = optional_param_array('newgrades', null, PARAM_NOTAGS);
+$search = optional_param_array('search', null, PARAM_NOTAGS);
+
 // Process release provisional grades
 if (isset($release)){
     grade_capture::release_prv_grade($courseid, $selectedmodule);
@@ -150,6 +152,11 @@ if (isset($release)){
     grade_capture::hideshowgrade($rowstudentid);
     unset($showhidegrade);
     unset($rowstudentid);
+    redirect($URL);
+    exit;
+}else if(isset($search) && count($search) > 0 && count(array_unique($search)) !== 1){
+
+    unset($search);
     redirect($URL);
     exit;
 }
