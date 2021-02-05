@@ -148,12 +148,12 @@ class grade_aggregation{
                     }
                     $aggrdobj->grade = local_gugcat::convert_grade($aggrade);
                     $aggrdobj->rawgrade = $rawaggrade;
-                    $numberformat = number_format(($gbaggregatedgrade->overridden == 0) ? $rawaggrade : $rawaggrade-1, 3);
+                    $numberformat = number_format($rawaggrade, 3);
                     $aggrdobj->display = in_array(get_string('nograderecorded', 'local_gugcat'), array_column($gradecaptureitem->grades, 'grade'))
-                        ? get_string('missinggrade', 'local_gugcat') 
-                        : (!strstr($rawaggrade, '-') ? ($totalweight < 75 ? ($gbaggregatedgrade->overridden == 0 
-                        ? $numberformat :  local_gugcat::convert_grade($aggrade)) .' ('.$numberformat.')' 
-                        : local_gugcat::convert_grade($aggrade) .' ('.$numberformat.')') : local_gugcat::convert_grade($aggrade));
+                    ? get_string('missinggrade', 'local_gugcat') 
+                    : ($gbaggregatedgrade->overridden == 0 ? ($totalweight < 75 ? $numberformat 
+                    : local_gugcat::convert_grade($aggrade) .' ('.$numberformat.')') 
+                    : local_gugcat::convert_grade($aggrade));
                     }
             }
             $gradecaptureitem->aggregatedgrade = $aggrdobj;
