@@ -20,7 +20,6 @@
 .gcat-header{
     margin: 15px 0;
     display: flex;
-    justify-content: space-between;
 }
 
 #gcat-cog{
@@ -93,14 +92,6 @@ td > i, th > i {
     background-color: #006630;
     color: white;
     opacity: 0.8;
-}
-
-.btn-download{
-    margin-bottom: 1.5em;
-}
-
-.btn-download, .btn-release {
-    float: right;
 }
 
 .btn-download, .btn-release, .btn-blue,
