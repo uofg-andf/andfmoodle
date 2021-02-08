@@ -123,5 +123,9 @@ $string['gi_moderatedgrade'] = 'Moderated Grade';
 $string['gi_secondgrade'] = 'Second Grade';
 $string['gi_thirdgrade'] = 'Third Grade';
 
+//Log events
+$string['eventimportgrades'] = 'Import grades from gradebook';
+$string['eventreleaseprvgrades'] = 'Release provisional grades';
+
 //gcat grade category
 $string['gcat_category'] = 'DO NOT USE';
