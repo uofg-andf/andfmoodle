@@ -70,6 +70,20 @@ if ($fromform = $mform->get_data()) {
     if($formtype == OVERRIDE_GRADE_FORM){
         $gradeitemid = local_gugcat::add_grade_item($courseid, get_string('aggregatedgrade', 'local_gugcat'), null);
         local_gugcat::update_grade($studentid, $gradeitemid, $fromform->override, $fromform->notes, time());
+        //log of adjust course weight
+        $params = array(
+            'context' => $coursecontext,
+            'other' => array(
+                'courseid' => $courseid,
+                'categoryid' => $categoryid,
+                'cnum' => $cnum,
+                'studentid' => $studentid,
+                'setting' => $formtype,
+                'page' => $page
+            )
+        );
+        $event = \local_gugcat\event\override_course_grade::create($params);
+        $event->trigger();
     }else if($formtype == ADJUST_WEIGHT_FORM){
         $weights = $fromform->weights;
         if(array_sum($weights) != 100){
@@ -80,6 +94,20 @@ if ($fromform = $mform->get_data()) {
             exit;
         }else{
             grade_aggregation::adjust_course_weight($weights, $courseid, $studentid, $fromform->notes);
+            //log of adjust course weight
+            $params = array(
+                'context' => $coursecontext,
+                'other' => array(
+                    'courseid' => $courseid,
+                    'categoryid' => $categoryid,
+                    'cnum' => $cnum,
+                    'studentid' => $studentid,
+                    'setting' => $formtype,
+                    'page' => $page
+                )
+            );
+            $event = \local_gugcat\event\adjust_course_weight::create($params);
+            $event->trigger();
         }
     }
     $url = new moodle_url('/local/gugcat/overview/index.php', array('id' => $courseid, 'page' => $page));
