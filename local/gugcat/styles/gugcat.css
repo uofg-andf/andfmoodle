@@ -220,3 +220,7 @@ td a:hover, .dropdown-item a:hover {
 .hide-show-grade, .hide-names {
     display: none;
 }
+
+.visible{
+    display: block;
+}

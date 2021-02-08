@@ -136,7 +136,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         $html .= $this->render_from_template('local_gugcat/gcat_tab_header', $tabheader);
         $html .= html_writer::start_tag('form', array('id' => 'multigradesform', 'method' => 'post', 'action' => $actionurl));
         $html .= $this->display_table($htmlrows, $htmlcolumns);
-        $html .= html_writer::empty_tag('button', array('id' => 'search-submit', 'type' => 'submit'));
+        $html .= html_writer::empty_tag('button', array('id' => 'search-submit', 'name' => 'search', 'type' => 'submit'));
         $html .= html_writer::empty_tag('button', array('id' => 'release-submit', 'name' => 'release', 'type' => 'submit'));
         $html .= html_writer::empty_tag('button', array('id' => 'multiadd-submit', 'name' => 'multiadd', 'type' => 'submit'));
         $html .= html_writer::empty_tag('button', array('id'=>'importgrades-submit', 'name'=> 'importgrades', 'type'=>'submit'));
@@ -244,6 +244,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
         ]);
         $html .= html_writer::start_tag('form', array('id' => 'requireresitform', 'method' => 'post', 'action' => $actionurl));
         $html .= $this->display_table($htmlrows, $htmlcolumns, false, true);
+        $html .= html_writer::empty_tag('button', array('id' => 'search-submit', 'name' => 'search', 'type' => 'submit'));
         $html .= html_writer::empty_tag('input', array('id'=>'resitstudentno', 'name' => 'rowstudentno', 'type' => 'hidden'));
         $html .= html_writer::empty_tag('button', array('id'=>'downloadcsv-submit', 'name'=> 'downloadcsv', 'type'=>'submit'));
         $html .= html_writer::empty_tag('button', array('id'=>'finalrelease-submit', 'name'=> 'finalrelease', 'type'=>'submit'));
@@ -374,7 +375,18 @@ class local_gugcat_renderer extends plugin_renderer_base {
     private function display_table($rows, $columns, $history = false, $aggregation = false) {
         $is_blind_marking = local_gugcat::is_blind_marking($this->page->cm);
         $searchicon = html_writer::tag('i', null, array('class' => 'fa fa-search', 'role' =>'button', 'tabindex' =>'0'));
-        $searchbar = html_writer::empty_tag('input', array('type' => 'text', 'name' => 'search[]', 'class' => 'input-search', 'placeholder' => get_string('search', 'local_gugcat')));
+        // Check if there's existing filters
+        $filters = optional_param_array('filters', array('idnumber' => '', 'firstname' => '', 'lastname' => ''), PARAM_NOTAGS);
+        $filters = local_gugcat::get_filters_from_url($filters);
+        // Add search bar element (sb) on idnumber, firstname, lastname
+        $sbattr = array('type' => 'text', 'placeholder' => get_string('search', 'local_gugcat'));
+        $sbidnumber = html_writer::empty_tag('input', $sbattr+array('name' => 'filters[idnumber]', 'value' => $filters['idnumber'],
+         'class' => 'input-search '.(!empty($filters['idnumber']) ? 'visible' : '')));
+        $sbfirstname = html_writer::empty_tag('input', $sbattr+array('name' => 'filters[firstname]', 'value' => $filters['firstname'],
+         'class' => 'input-search '.(!empty($filters['firstname']) ? 'visible' : '')));
+        $sblastname = html_writer::empty_tag('input', $sbattr+array('name' => 'filters[lastname]', 'value' => $filters['lastname'],
+         'class' => 'input-search '.(!empty($filters['lastname']) ? 'visible' : '')));
+        
         $html = html_writer::start_tag('table', array('id'=>'gcat-table', 'class' => 'table'));
         $html .= html_writer::start_tag('thead');
         $html .= html_writer::start_tag('tr');
@@ -382,10 +394,10 @@ class local_gugcat_renderer extends plugin_renderer_base {
             if($aggregation){
                 $html .= html_writer::tag('th', get_string('candidateno', 'local_gugcat'), array('class' => 'sortable'));
             }
-            $html .= html_writer::tag('th', html_writer::tag('span',  get_string('studentno', 'local_gugcat'), array('class' => 'sortable')).$searchicon.$searchbar);
+            $html .= html_writer::tag('th', html_writer::tag('span',  get_string('studentno', 'local_gugcat'), array('class' => 'sortable')).$searchicon.$sbidnumber);
             if(!$is_blind_marking){
-                $html .= html_writer::tag('th', html_writer::tag('span',  get_string('surname', 'local_gugcat'), array('class' => 'sortable')).$searchicon.$searchbar, array('class' => 'blind-marking'));
-                $html .= html_writer::tag('th', html_writer::tag('span',  get_string('forename', 'local_gugcat'), array('class' => 'sortable')).$searchicon.$searchbar, array('class' => 'blind-marking'));
+                $html .= html_writer::tag('th', html_writer::tag('span',  get_string('surname', 'local_gugcat'), array('class' => 'sortable')).$searchicon.$sblastname, array('class' => 'blind-marking'));
+                $html .= html_writer::tag('th', html_writer::tag('span',  get_string('forename', 'local_gugcat'), array('class' => 'sortable')).$searchicon.$sbfirstname, array('class' => 'blind-marking'));
             }
         }
         $html .= $columns;
