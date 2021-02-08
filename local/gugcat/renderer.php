@@ -203,20 +203,12 @@ class local_gugcat_renderer extends plugin_renderer_base {
 
         $htmlcolumns = null;
         $htmlrows = null;
-        $weight_arr = array();
-        $index = 0;
-
-        foreach($rows as $r){
-            foreach($r->grades as $grade){
-                array_push($weight_arr, $grade->weight);
-            }
-        }
-    
-        $weights = array_unique($weight_arr);
 
         foreach ($activities as $act) {
-            $index+=1;
-            $htmlcolumns .= html_writer::tag('th', $act->name.'<br/>'.$weights[$index-1].'%', array('class' => 'sortable'));
+            $weightcoef1 = $act->gradeitem->aggregationcoef; //Aggregation coeficient used for weighted averages or extra credit
+            $weightcoef2 = $act->gradeitem->aggregationcoef2; //Aggregation coeficient used for weighted averages only
+            $weight = ((float)$weightcoef1 > 0) ? (float)$weightcoef1 : (float)$weightcoef2;
+            $htmlcolumns .= html_writer::tag('th', $act->name.'<br/>'.($weight * 100).'%', array('class' => 'sortable'));
         }
         $htmlcolumns .= html_writer::tag('th', get_string('requiresresit', 'local_gugcat'), array('class' => 'sortable'));
         $htmlcolumns .= html_writer::tag('th', get_string('percentcomplete', 'local_gugcat'), array('class' => 'sortable'));
