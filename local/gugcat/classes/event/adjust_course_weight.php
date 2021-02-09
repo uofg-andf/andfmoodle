@@ -36,13 +36,13 @@ class adjust_course_weight extends \core\event\base {
     }
  
     public function get_description() {
-        return "The user with id {$this->userid} adjusted the course weight of course id {$this->courseid}.";
+        return "The user with id {$this->userid} adjusted the course weight of the student with a student number of {$this->other['idnumber']} for course with the id of {$this->courseid}.";
     }
  
     public function get_url() {
-        $url = new \moodle_url('local/gugcat/overview/gradeform/index.php', array('id' => $this->courseid, 'studentid'=>$this->studentid, 'cnum'=>$this->cnum ,'page'=>$this->page, 'setting'=>$this->setting));
-        if(!is_null($this->categoryid))
-            $url .= '&categoryid='.$this->categoryid;
+        $url = new \moodle_url('local/gugcat/overview/gradeform/index.php', array('id' => $this->courseid, 'studentid'=>$this->other['studentid'], 'cnum'=>$this->other['cnum'] ,'page'=>$this->other['page'], 'setting'=>$this->other['setting']));
+        if(!is_null($this->other['categoryid']))
+            $url->param('categoryid', $this->other['categoryid']);
 
         return $url;
     }

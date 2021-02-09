@@ -36,15 +36,15 @@ class add_multiple_grades extends \core\event\base {
     }
  
     public function get_description() {
-        return "The user with id {$this->userid} added multiple grades.";
+        return "The user with id {$this->userid} has added multiple grades for the activity with the id of {$this->other['activityid']}.";
     }
  
     public function get_url() {
-        $url = new \moodle_url('local/gugcat/index.php', array('id' => $this->courseid));
-        if(!is_null($this->activityid))
-            $url .= '&activityid='.$this->activityid;
-        if(!is_null($this->categoryid))
-            $url .= '&categoryid='.$this->categoryid;
+        $url = new \moodle_url('local/gugcat/index.php', array('id' => $this->courseid, 'page'=>$this->other['page']));
+        if(!is_null($this->other['activityid']))
+            $url->param('activityid', $this->other['activityid']);
+        if(!is_null($this->other['categoryid']))
+            $url->param('categoryid', $this->other['categoryid']);
 
         return $url;
     }

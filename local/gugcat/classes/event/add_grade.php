@@ -36,13 +36,13 @@ class add_grade extends \core\event\base {
     }
  
     public function get_description() {
-        return "The user with id {$this->userid} added a grade {$this->grade} in {$this->gradeitem} grade version to student with a student number of {$this->studno}.";
+        return "The user with id {$this->userid} has added a grade {$this->other['grade']} to {$this->other['gradeitem']} grade version to the student with a student number of {$this->other['idnumber']}.";
     }
  
     public function get_url() {
-        $url = new \moodle_url('local/gugcat/add/index.php', array('id' => $this->courseid, 'activityid'=>$this->activityid, 'studentid'=>$this->studentid, 'page'=>$this->page));
-        if(!is_null($this->categoryid))
-            $url .= '&categoryid='.$this->categoryid;
+        $url = new \moodle_url('local/gugcat/add/index.php', array('id' => $this->courseid, 'activityid'=>$this->other['activityid'], 'studentid'=>$this->other['studentno'], 'page'=>$this->other['page']));
+        if(!is_null($this->other['categoryid']))
+            $url->param('categoryid', $this->other['categoryid']);
 
         return $url;
     }

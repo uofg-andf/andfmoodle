@@ -36,15 +36,15 @@ class import_grade extends \core\event\base {
     }
  
     public function get_description() {
-        return "The user with id {$this->userid} imported grades from gradebook.";
+        return "The user with id {$this->userid} imported grades from gradebook for activity with activity id of {$this->other['activityid']} in the course with the id of {$this->courseid}.";
     }
  
     public function get_url() {
-        $url = new \moodle_url('local/gugcat/index.php', array('id' => $this->courseid));
-        if(!is_null($this->activityid))
-            $url .= '&activityid='.$this->activityid;
-        if(!is_null($this->categoryid))
-            $url .= '&categoryid='.$this->categoryid;
+        $url = new \moodle_url('local/gugcat/index.php', array('id' => $this->courseid, 'page' => $this->other['page']));
+        if(!is_null($this->other['activityid']))
+            $url->param('activityid', $this->other['activityid']);
+        if(!is_null($this->other['categoryid']))
+            $url->param('categoryid', $this->other['categoryid']);
 
         return $url;
     }

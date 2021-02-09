@@ -36,13 +36,13 @@ class release_final_assessment_grade extends \core\event\base {
     }
  
     public function get_description() {
-        return "The user with id {$this->userid} have released final assessment grade for the course with the course id of {$this->courseid}.";
+        return "The user with id {$this->userid} have released final assessment grade in the course with the id of {$this->courseid}.";
     }
  
     public function get_url() {
-        $url = new \moodle_url('local/gugcat/overview/index.php', array('id' => $this->courseid, 'page'=>$this->page));
-        if(!is_null($this->categoryid))
-            $url .= '&categoryid='.$this->categoryid;
+        $url = new \moodle_url('local/gugcat/overview/index.php', array('id' => $this->courseid, 'page'=>$this->other['page']));
+        if(!is_null($this->other['categoryid']))
+            $url->param('categoryid', $this->other['categoryid']);
 
         return $url;
     }

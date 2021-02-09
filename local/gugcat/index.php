@@ -139,7 +139,8 @@ if (isset($release)){
         'other' => array(
             'courseid' => $courseid,
             'activityid' => $activityid,
-            'categoryid' => $categoryid
+            'categoryid' => $categoryid,
+            'page' => $page
         )
     );
     $event = \local_gugcat\event\release_prv_grade::create($params);
@@ -166,6 +167,7 @@ if (isset($release)){
                 'courseid' => $courseid,
                 'activityid' => $activityid,
                 'categoryid' => $categoryid,
+                'page' => $page
             )
         );
         $event = \local_gugcat\event\add_multiple_grades::create($params);
@@ -191,7 +193,8 @@ if (isset($release)){
             'other' => array(
                 'courseid' => $courseid,
                 'activityid' => $activityid,
-                'categoryid' => $categoryid
+                'categoryid' => $categoryid,
+                'page' => $page
             )
         );
         $event = \local_gugcat\event\import_grade::create($params);

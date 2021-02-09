@@ -32,30 +32,28 @@ class ammend_grade extends \core\event\base {
     }
  
     public static function get_name() {
-        return get_string('eventaddgrades', 'local_gugcat');
+        return get_string('eventammendgrade', 'local_gugcat');
     }
  
     public function get_description() {
-        return "The user with id {$this->userid} ammended a grade {$this->grade} of {$this->gradeitem} grade version to student with a student number of {$this->studno}.";
+        return "The user with id {$this->userid} has ammended {$this->other['gradeitem']} grade version with grade {$this->other['grade']} to the student with a student number of {$this->other['idnumber']}.";
     }
  
     public function get_url() {
-        $url = new \moodle_url('local/gugcat/edit/index.php', array('id' => $this->courseid, 'activityid'=>$this->activityid, 'studentid'=>$this->studentid, 'page'=>$this->page, 'overview'=>$this->overview));
-        if(!is_null($this->categoryid))
-            $url .= '&categoryid='.$this->categoryid;
+        $url = new \moodle_url('local/gugcat/edit/index.php', array('id' => $this->courseid, 'activityid'=>$this->other['activityid'], 'studentid'=>$this->other['studentno'], 'page'=>$this->other['page'], 'overview'=>$this->other['overview']));
+        if(!is_null($this->other['categoryid']))
+            $url->param('categoryid', $this->other['categoryid']);
 
         return $url;
     }
  
     public function get_legacy_logdata() {
-        // Override if you are migrating an add_to_log() call.
         return array($this->courseid, 'local_gugcat', 'ammend_grade',
             '...........',
             '....', $this->contextinstanceid);
     }
  
     protected function get_legacy_eventdata() {
-        // Override if you migrating events_trigger() call.
         $data = new \stdClass();
         $data->userid = $this->relateduserid;
         return $data;

@@ -91,7 +91,7 @@ if ($fromform = $mform->get_data()) {
             'categoryid' => $categoryid,
             'studentno' => $studentid,
             'idnumber' => $student->idnumber,
-            'grade' => $fromform->grade,
+            'grade' => local_gugcat::convert_grade($fromform->grade),
             'gradeitem' => $gradereason,
             'page'=> $page
         )
