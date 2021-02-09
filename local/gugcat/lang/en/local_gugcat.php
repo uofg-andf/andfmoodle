@@ -94,6 +94,7 @@ $string['releaseprvgrades'] = 'Release provisional grades';
 $string['requiresresit'] = 'Requires Resit';
 $string['saveallnewgrade'] = 'Save multiple grades';
 $string['savechanges'] = 'Save changes';
+$string['search'] = 'Search...';
 $string['selectreason'] = 'Select reason';
 $string['showassessment'] = 'Show assessments on Student Dashboard';
 $string['showidentities'] = 'Show student identities';
@@ -124,6 +125,16 @@ $string['gi_latepenalty'] = 'Late Penalty';
 $string['gi_moderatedgrade'] = 'Moderated Grade';
 $string['gi_secondgrade'] = 'Second Grade';
 $string['gi_thirdgrade'] = 'Third Grade';
+
+//Log events
+$string['eventaddgrades'] = 'Add new grade for user';
+$string['eventaddmultiplegrades'] = 'Add Multiple Grades';
+$string['eventadjustgrade'] = 'Adjust student\'s course weightings';
+$string['eventammendgrade'] = 'Ammend grade for user';
+$string['eventimportgrades'] = 'Import grades from gradebook';
+$string['eventoverridegrade'] = 'Override student\'s course grade';
+$string['eventreleasefinalgrades'] = 'Release final assessment grades';
+$string['eventreleaseprvgrades'] = 'Release provisional grades';
 
 //gcat grade category
 $string['gcat_category'] = 'DO NOT USE';
