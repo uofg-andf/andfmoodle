@@ -590,7 +590,7 @@ class local_gugcat {
      */
     public static function is_blind_marking($module = null){
         global $COURSE;
-        if(has_capability('moodle/site:approvecourse', context_system::instance())){
+        if(has_capability('local/gugcat:revealidentities', context_system::instance())){
             return false;
         }else{
             if(!is_null($module)){
