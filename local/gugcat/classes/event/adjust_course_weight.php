@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  
 /**
- * The EVENTNAME event.
+ * The local_gugcat adjust course weight event.
 *
  * @package    local_gugcat
  * @copyright  2020

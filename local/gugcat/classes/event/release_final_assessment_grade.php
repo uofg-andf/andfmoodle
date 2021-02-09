@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  
 /**
- * The EVENTNAME event.
+ * the local_gugcat release final assessment grade event.
 *
  * @package    local_gugcat
  * @copyright  2020
