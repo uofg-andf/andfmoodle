@@ -453,18 +453,18 @@ class local_gugcat_renderer extends plugin_renderer_base {
      * Render display of the GCAT cogwheel 
      */
     private function gcat_settings() {
-        $context = context_system::instance();
+        $courseid = (int)$this->page->course->id;
+        $coursecontext = context_course::instance($courseid);
         $class = array('class' => 'dropdown-item');
-        if(has_capability('local/gugcat:displayassessments', $context)){
-            $courseid = (int)$this->page->course->id;
-            $coursecontext = context_course::instance($courseid);
+        if(has_capability('local/gugcat:displayassessments', $coursecontext)){
+            
             $checkboxvalue = local_gugcat::get_value_of_customfield_checkbox($courseid, $coursecontext->id);
             $switchstr = $checkboxvalue == 1 ? get_string('switchoffdisplay', 'local_gugcat') : get_string('switchondisplay', 'local_gugcat');
         }
         $html = html_writer::tag('i', null, array('id' => 'gcat-cog', 'class' => 'fa fa-cog', 'data-toggle' => 'dropdown', 'role' =>'button', 'tabindex' =>'0'));
         $html .= html_writer::start_tag('ul', array('class' => 'dropdown-menu'));
-        $html .= has_capability('local/gugcat:revealidentities', $context) ? html_writer::tag('li', html_writer::tag('a', get_string('hideidentities', 'local_gugcat'), array('id'=>'btn-identities', 'href' => '#')), $class) : null;
-        $html .= has_capability('local/gugcat:displayassessments', $context) ? html_writer::tag('li', html_writer::tag('a',  $switchstr, array('id'=>'btn-switch-display', 'href' => '#')), $class) : null;
+        $html .= has_capability('local/gugcat:revealidentities', $coursecontext) ? html_writer::tag('li', html_writer::tag('a', get_string('hideidentities', 'local_gugcat'), array('id'=>'btn-identities', 'href' => '#')), $class) : null;
+        $html .= has_capability('local/gugcat:displayassessments', $coursecontext) ? html_writer::tag('li', html_writer::tag('a',  $switchstr, array('id'=>'btn-switch-display', 'href' => '#')), $class) : null;
         $html .= html_writer::end_tag('ul');
         return $html;
     }  
@@ -474,6 +474,7 @@ class local_gugcat_renderer extends plugin_renderer_base {
      */
     private function header() {
         $courseid = $this->page->course->id;
+        $coursecontext = context_course::instance($courseid);
         $categoryid = optional_param('categoryid', null, PARAM_INT);
         $activityid = optional_param('activityid', null, PARAM_INT);
         //reindex grade category arrayco
@@ -495,8 +496,8 @@ class local_gugcat_renderer extends plugin_renderer_base {
             null,
             'select-category',
             'select-category');
-        $html .= (has_capability('local/gugcat:revealidentities', context_system::instance()) 
-            || has_capability('local/gugcat:displayassessments', context_system::instance()))
+        $html .= (has_capability('local/gugcat:revealidentities', $coursecontext) 
+            || has_capability('local/gugcat:displayassessments', $coursecontext))
             ? $this->gcat_settings() 
             : null;
         $html .= html_writer::end_tag('div');
