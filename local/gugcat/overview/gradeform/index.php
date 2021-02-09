@@ -72,15 +72,7 @@ if ($fromform = $mform->get_data()) {
         local_gugcat::update_grade($studentid, $gradeitemid, $fromform->override, $fromform->notes, time());
     }else if($formtype == ADJUST_WEIGHT_FORM){
         $weights = $fromform->weights;
-        if(array_sum($weights) != 100){
-            local_gugcat::notify_error('errortotalweight');
-            $URL = new moodle_url('/local/gugcat/overview/gradeform/index.php', $urlparams);
-            (!is_null($categoryid) && $categoryid != 0) ? $URL->param('categoryid', $categoryid) : null;
-            redirect($URL);
-            exit;
-        }else{
-            grade_aggregation::adjust_course_weight($weights, $courseid, $studentid, $fromform->notes);
-        }
+        grade_aggregation::adjust_course_weight($weights, $courseid, $studentid, $fromform->notes);
     }
     $url = new moodle_url('/local/gugcat/overview/index.php', array('id' => $courseid, 'page' => $page));
     (!is_null($categoryid) && $categoryid != 0) ? $url->param('categoryid', $categoryid) : null;

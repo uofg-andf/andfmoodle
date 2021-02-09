@@ -206,7 +206,7 @@ td a:hover, .dropdown-item a:hover {
 /* Hide submit buttons */
 #release-submit, #importgrades-submit, 
 #finalrelease-submit, #downloadcsv-submit,
-#multiadd-submit {
+#multiadd-submit, #coursegradeform-submit{
     position: absolute;
     visibility: hidden;
 }
