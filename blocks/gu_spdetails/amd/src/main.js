@@ -189,6 +189,7 @@ define(['core/ajax'], function(Ajax) {
     
     const loadAssessments = (activetab, page, sortby, sortorder) => {
         var blockContainer = document.getElementById('assessments_details_container');
+        var overlay = document.getElementById('assessments_details_overlay');
         var tabContent = document.getElementById('assessments_details_contents');
         var promise = Ajax.call([{
             methodname: 'block_gu_spdetails_retrieve_assessments',
@@ -200,9 +201,11 @@ define(['core/ajax'], function(Ajax) {
             },
         }]);
         promise[0].done(function(response) {
+            overlay.style.display = 'block';
             tabContent.innerHTML = response.result;
             onClickPageLink();
             sortingStatus(sortby, sortorder);
+            overlay.style.display = 'none';
         }).fail(function(response) {
             if(response) {
                 var errorContainer = document.createElement('div');
