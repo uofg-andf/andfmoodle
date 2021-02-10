@@ -113,7 +113,7 @@ $string['surname'] = 'Surname';
 $string['switchoffdisplay'] = 'Switch off display of assessments on Student Dashboard';
 $string['switchondisplay'] = 'Switch on display of assessments on Student Dashboard'; 
 $string['title'] = 'Grade Capture & Course Grade Aggregation';
-$string['valuemust'] = 'Value must equal 100%';
+$string['totalweight'] = 'Total Weighting';
 $string['viewcoursehistory'] = 'View Course Grade History';
 
 // Grade item names
