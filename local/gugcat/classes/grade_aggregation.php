@@ -261,7 +261,7 @@ class grade_aggregation{
         $is_blind_marking = local_gugcat::is_blind_marking();
         $is_blind_marking ? null : array_push($columns, ...array('surname', 'forename'));
         $students = get_enrolled_users(context_course::instance($course->id), 'local/gugcat:gradable');
-        $modules = local_gugcat::get_activities($course->id, true);
+        $modules = local_gugcat::get_activities($course->id, false);
         //Process the activity names
         $activities = array();
         foreach($modules as $cm) {
