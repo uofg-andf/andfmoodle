@@ -31,6 +31,7 @@ define(['core/ajax'], function(Ajax) {
         var sortByDate = document.getElementById('sortby_date');
         var sortByStartDate = document.getElementById('sortby_startdate');
         var sortByEndDate = document.getElementById('sortby_enddate');
+        var isPageClicked = false;
 
         switch(event.target) {
             case currentTab:
@@ -42,7 +43,7 @@ define(['core/ajax'], function(Ajax) {
                 currentTab.classList.add('active');
                 pastTab.classList.remove('active');
 
-                loadAssessments(activetab, page, sortby, sortorder);
+                loadAssessments(activetab, page, sortby, sortorder, isPageClicked);
                 break;
             case pastTab:
                 var activetab = 'past';
@@ -53,7 +54,7 @@ define(['core/ajax'], function(Ajax) {
                 currentTab.classList.remove('active');
                 pastTab.classList.add('active');
 
-                loadAssessments(activetab, page, sortby, sortorder);
+                loadAssessments(activetab, page, sortby, sortorder, isPageClicked);
                 break;
             case sortByCourse:
                 if(currentTab.classList.contains('active')) {
@@ -75,7 +76,7 @@ define(['core/ajax'], function(Ajax) {
                     sortByCourse.classList.add('th-sort-asc');
                     sortByCourse.classList.remove('th-sort-desc');
                 }
-                loadAssessments(activetab, page, sortby, sortorder);
+                loadAssessments(activetab, page, sortby, sortorder, isPageClicked);
                 break;
             case sortByDate:
                 var activetab = 'current';
@@ -92,7 +93,7 @@ define(['core/ajax'], function(Ajax) {
                     sortByDate.classList.add('th-sort-asc');
                     sortByDate.classList.remove('th-sort-desc');
                 }
-                loadAssessments(activetab, page, sortby, sortorder);
+                loadAssessments(activetab, page, sortby, sortorder, isPageClicked);
                 break;
             case sortByStartDate:
                 var activetab = 'past';
@@ -109,7 +110,7 @@ define(['core/ajax'], function(Ajax) {
                     sortByStartDate.classList.add('th-sort-asc');
                     sortByStartDate.classList.remove('th-sort-desc');
                 }
-                loadAssessments(activetab, page, sortby, sortorder);
+                loadAssessments(activetab, page, sortby, sortorder, isPageClicked);
                 break;
             case sortByEndDate:
                 var activetab = 'past';
@@ -126,7 +127,7 @@ define(['core/ajax'], function(Ajax) {
                     sortByEndDate.classList.add('th-sort-asc');
                     sortByEndDate.classList.remove('th-sort-desc');
                 }
-                loadAssessments(activetab, page, sortby, sortorder);
+                loadAssessments(activetab, page, sortby, sortorder, isPageClicked);
                 break;
             default:
                 break;
@@ -140,6 +141,7 @@ define(['core/ajax'], function(Ajax) {
         var sortByDate = document.getElementById('sortby_date');
         var sortByStartDate = document.getElementById('sortby_startdate');
         var sortByEndDate = document.getElementById('sortby_enddate');
+        var isPageClicked = false;
 
         switch(event.target) {
             case currentSelectSort:
@@ -158,7 +160,7 @@ define(['core/ajax'], function(Ajax) {
                     sortByDate.setAttribute('data-value', 'asc');
                 }
 
-                loadAssessments(activetab, page, sortby, sortorder);
+                loadAssessments(activetab, page, sortby, sortorder, isPageClicked);
                 break;
             case pastSelectSort:
                 var activetab = 'past';
@@ -180,14 +182,15 @@ define(['core/ajax'], function(Ajax) {
                     sortByEndDate.setAttribute('data-value', 'asc');
                 }
 
-                loadAssessments(activetab, page, sortby, sortorder);
+                loadAssessments(activetab, page, sortby, sortorder, isPageClicked);
                 break;
             default:
                 break;
         }
     }
     
-    const loadAssessments = function(activetab, page, sortby, sortorder) {
+    const loadAssessments = function(activetab, page, sortby, sortorder, isPageClicked) {
+        var blockElement = document.querySelector('.block_gu_spdetails');
         var blockContainer = document.querySelector('.assessments-details-container');
         var tabContent = document.getElementById('assessments_details_contents');
         var promise = Ajax.call([{
@@ -203,6 +206,9 @@ define(['core/ajax'], function(Ajax) {
             tabContent.innerHTML = response.result;
             onClickPageLink();
             sortingStatus(sortby, sortorder);
+            if(isPageClicked) {
+                blockElement.scrollIntoView();
+            }
         }).fail(function(response) {
             if(response) {
                 var errorContainer = document.createElement('div');
@@ -308,9 +314,10 @@ define(['core/ajax'], function(Ajax) {
                 var page = params.get('page');
                 var sortby = params.get('sortby');
                 var sortorder = params.get('sortorder');
+                var isPageClicked = true;
                 item.addEventListener('click', function(event) {
                     event.preventDefault();
-                    loadAssessments(activetab, page, sortby, sortorder);
+                    loadAssessments(activetab, page, sortby, sortorder, isPageClicked);
                 });
             }else{
                 item.removeAttribute('href');
@@ -328,11 +335,12 @@ define(['core/ajax'], function(Ajax) {
                 var page = 0;
                 var sortby = 'coursetitle';
                 var sortorder = 'asc';
+                var isPageClicked = false;
 
                 currentTab.classList.add('active');
                 pastTab.classList.remove('active');
 
-                loadAssessments(activetab, page, sortby, sortorder);
+                loadAssessments(activetab, page, sortby, sortorder, isPageClicked);
                 ASSESSMENTS.addEventListener('change', onChangeListeners);
                 ASSESSMENTS.addEventListener('click', onClickListeners);
             }
