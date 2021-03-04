@@ -23,7 +23,7 @@
  */
 
 define(['core/ajax'], function(Ajax) {
-    const onClickListeners = (event) => {
+    const onClickListeners = function(event) {
         var currentTab = document.getElementById('current_tab');
         var pastTab = document.getElementById('past_tab');
 
@@ -133,7 +133,7 @@ define(['core/ajax'], function(Ajax) {
         }
     }
 
-    const onChangeListeners = (event) => {
+    const onChangeListeners = function(event) {
         var currentSelectSort = document.getElementById('menu_current_assessments_sortby');
         var pastSelectSort = document.getElementById('menu_past_assessments_sortby');
         var sortByCourse = document.getElementById('sortby_course');
@@ -187,7 +187,7 @@ define(['core/ajax'], function(Ajax) {
         }
     }
     
-    const loadAssessments = (activetab, page, sortby, sortorder) => {
+    const loadAssessments = function(activetab, page, sortby, sortorder) {
         var blockContainer = document.querySelector('.assessments-details-container');
         var tabContent = document.getElementById('assessments_details_contents');
         var promise = Ajax.call([{
@@ -233,7 +233,7 @@ define(['core/ajax'], function(Ajax) {
         });
     }
 
-    const sortingStatus = (sortby, sortorder) => {
+    const sortingStatus = function(sortby, sortorder) {
         var sortByCourse = document.getElementById('sortby_course');
         var sortByDate = document.getElementById('sortby_date');
         var sortByStartDate = document.getElementById('sortby_startdate');
@@ -297,10 +297,10 @@ define(['core/ajax'], function(Ajax) {
         }
     }
 
-    const onClickPageLink = () => {
+    const onClickPageLink = function() {
         var pageLinks = document.querySelectorAll('#assessments_details_contents .page-item a.page-link');
 
-        pageLinks.forEach(item => {
+        pageLinks.forEach(function(item) {
             if(item.getAttribute('href') !== '#') {
                 var url = new URL(item.getAttribute('href'));
                 var params = new URLSearchParams(url.search);
@@ -308,7 +308,7 @@ define(['core/ajax'], function(Ajax) {
                 var page = params.get('page');
                 var sortby = params.get('sortby');
                 var sortorder = params.get('sortorder');
-                item.addEventListener('click', event => {
+                item.addEventListener('click', function(event) {
                     event.preventDefault();
                     loadAssessments(activetab, page, sortby, sortorder);
                 });
