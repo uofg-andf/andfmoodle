@@ -370,6 +370,26 @@ class local_gugcat_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render display of best grade form page for assessment comparison and configuring aggregation
+     * 
+     */
+    public function display_compare_form() {
+        $setting = required_param('setting', PARAM_INT);
+        $title = get_string(($setting != 0 ? 'setupaggrecalc' : 'setupcustomgradefield'), 'local_gugcat');
+        $html = $this->header();
+        $html .= html_writer::start_tag('div', array('class' => 'form-container'));
+        $html .= html_writer::tag('h5', $title, array('class' => 'title'));
+        $html .= html_writer::end_tag('div');
+
+        // $html .= $this->render_from_template('local_gugcat/gcat_form_details', (object)[
+        //     'title' =>get_string(($setting != 0 ? 'overridestudgrade' : 'adjustcourseweight'), 'local_gugcat'),
+        //     'student' => $student,
+        //     'blindmarking'=> !local_gugcat::is_blind_marking() ? true : null
+        // ]);
+        return $html;
+    }
+
+    /**
      * Render a reusable custom UI table element
      * @param array $rows 
      * @param array $columns 

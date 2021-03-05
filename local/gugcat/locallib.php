@@ -257,7 +257,7 @@ class local_gugcat {
      * @param mixed $mod Selected course module
      * @param string $itemname 
      */
-    public static function add_grade_item($courseid, $itemname, $mod, $students_ = null){
+    public static function add_grade_item($courseid, $itemname, $mod, $students_ = null, $iteminfo = null){
         // Get all students ids if students_ param is null
         $students = is_null($students_) 
         ? get_enrolled_users(context_course ::instance($courseid), 'local/gugcat:gradable', 0, 'u.id') 
@@ -272,6 +272,7 @@ class local_gugcat {
         ];
         if(is_null($mod)){
             $params['itemname'] = $itemname;
+            $params['iteminfo'] = $iteminfo;
             //creates grade item that has no module
             $gradeitem = new grade_item($params, true);
             if($gradeitem->id){
