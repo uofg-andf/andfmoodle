@@ -89,13 +89,13 @@ class importform extends moodleform {
         $mform->addElement('hidden', 'categoryid', optional_param('categoryid', null, PARAM_INT));
         $mform->setType('categoryid', PARAM_ACTION);
 
-        $mform->addElement('select', 'reasons', "Select reason:", local_gugcat::get_reasons(), ['class' => 'mform-custom-select']); 
+        $mform->addElement('select', 'reasons', get_string('selectreason', 'local_gugcat'), local_gugcat::get_reasons(), ['class' => 'mform-custom-select']); 
         $mform->setType('reasons', PARAM_NOTAGS); 
         $mform->setDefault('reasons', "Select Reason");
 
         $buttonarray = array();
-        $buttonarray[] =& $mform->createElement('cancel', 'cancel', 'Back');
-        $buttonarray[] =& $mform->createElement('submit', 'submitbutton', 'Import file');
+        $buttonarray[] =& $mform->createElement('cancel', 'cancel', get_string('back'));
+        $buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('importfile', 'local_gugcat'));
         $mform->addGroup($buttonarray, 'buttonarr', '', array(''), false);
         
     }
