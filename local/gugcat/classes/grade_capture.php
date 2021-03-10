@@ -466,7 +466,6 @@ class grade_capture{
                     $status = local_gugcat::add_update_grades($id, $gradeitemid, $grade);
                 }
             }
-            local_gugcat::notify_success('successimportupload');
         }
         return array($status, $gradebookerrors);
         

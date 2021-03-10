@@ -54,7 +54,6 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_url($URL);
 
 $renderer = $PAGE->get_renderer('local_gugcat');
-echo $OUTPUT->header();
 
 // Set up the upload import form.
 $mform = new uploadform(null, array('includeseparator' => true, 'acceptedtypes' =>
@@ -62,8 +61,8 @@ array('.csv', '.txt')));
 if(!$iid){
     // If the upload form has been submitted.
     if ($formdata = $mform->get_data()) {
+        echo $OUTPUT->header();
         $text = $mform->get_file_content('userfile');
-        
         $csvimport = new gradeimport_csv_load_data();
         $csvimport->load_csv_content($text, 'UTF-8', $formdata->separator, 10);
         $csvimporterror = $csvimport->get_error();
@@ -83,6 +82,7 @@ if(!$iid){
 
     }else{
         // Display the standard upload file form.
+        echo $OUTPUT->header();
         echo $renderer->display_upload_import_form();
         echo $mform->display();
         echo $OUTPUT->footer();
@@ -110,6 +110,7 @@ if ($formdata = $mform2->get_data()) {
 
     list($status, $errors) = grade_capture::prepare_import_data($csvimportdata, $module, $gradereason);
     if($status && count($errors) == 0){
+        local_gugcat::notify_success('successimportupload');
         if($categoryid && $categoryid != 0){
             $indexurl->param('categoryid', $categoryid);
         }
@@ -117,6 +118,7 @@ if ($formdata = $mform2->get_data()) {
         redirect($indexurl);
         exit;
     }else{
+        echo $OUTPUT->header();
         $iid = null;
         $errors[] = get_string('importfailed', 'grades');
         foreach ($errors as $error) {
@@ -127,7 +129,7 @@ if ($formdata = $mform2->get_data()) {
         echo $mform->display();
         echo $OUTPUT->footer();
     }
-}else if ($mform2->is_cancelled()) {
+} else if ($mform2->is_cancelled()) {
     $iid = null;
     redirect($PAGE->url);
 } else {
